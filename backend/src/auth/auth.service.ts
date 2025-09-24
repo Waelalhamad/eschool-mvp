@@ -1,16 +1,16 @@
 import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { User, UserRole } from '../entities/user.entity';
+import { User, UserDocument, UserRole } from '../schemas/user.schema';
 import { SignUpDto, SignInDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
 
@@ -31,21 +31,21 @@ export class AuthService {
       throw new BadRequestException('Please provide a valid email address');
     }
 
-    const existingUser = await this.userRepository.findOne({ where: { email: email.toLowerCase() } });
+    const existingUser = await this.userModel.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = this.userRepository.create({
+    const user = new this.userModel({
       name: name.trim(),
       email: email.toLowerCase().trim(),
       passwordHash: hashedPassword,
       role: role || UserRole.STUDENT,
     });
 
-    await this.userRepository.save(user);
+    await user.save();
 
     const payload = { email: user.email, sub: user.id, role: user.role };
     const accessToken = this.jwtService.sign(payload);
@@ -73,7 +73,7 @@ export class AuthService {
       throw new BadRequestException('Email and password are required');
     }
 
-    const user = await this.userRepository.findOne({ where: { email: email.toLowerCase() } });
+    const user = await this.userModel.findOne({ email: email.toLowerCase() });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
@@ -114,7 +114,7 @@ export class AuthService {
   }
 
   async validateUser(payload: any): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: payload.sub } });
+    const user = await this.userModel.findById(payload.sub);
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -122,7 +122,7 @@ export class AuthService {
   }
 
   async getProfile(userId: string) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userModel.findById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -142,7 +142,7 @@ export class AuthService {
   }
 
   async updateProfile(userId: string, updateData: Partial<SignUpDto>) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userModel.findById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -158,7 +158,7 @@ export class AuthService {
       user.avatar = updateData.avatar;
     }
 
-    await this.userRepository.save(user);
+    await user.save();
 
     return {
       user: {
