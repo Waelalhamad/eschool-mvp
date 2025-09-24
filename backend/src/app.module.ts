@@ -10,6 +10,9 @@ import { LessonsModule } from "./lessons/lessons.module";
 import { QuizzesModule } from "./quizzes/quizzes.module";
 import { CouponsModule } from "./coupons/coupons.module";
 import { UploadsModule } from "./uploads/uploads.module";
+import { HealthModule } from "./health/health.module";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 
 @Module({
   imports: [
@@ -40,6 +43,9 @@ import { UploadsModule } from "./uploads/uploads.module";
     QuizzesModule,
     CouponsModule,
     UploadsModule,
+    HealthModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
