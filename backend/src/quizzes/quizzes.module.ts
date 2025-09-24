@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { QuizzesController } from './quizzes.controller';
 import { QuizzesService } from './quizzes.service';
 import { Quiz, QuizSchema } from '../schemas/quiz.schema';
-import { QuizSubmission, QuizSubmissionSchema } from '../schemas/quizsubmission.schema';
+import { QuizSubmission, QuizSubmissionSchema } from '../schemas/quiz-submission.schema';
 import { Lesson, LessonSchema } from '../schemas/lesson.schema';
 import { User, UserSchema } from '../schemas/user.schema';
 
