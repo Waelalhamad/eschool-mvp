@@ -1,8 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, Index } from 'typeorm';
 import { User } from './user.entity';
 import { Lesson } from './lesson.entity';
 
 @Entity()
+@Index(['teacherId'])
+@Index(['isActive'])
+@Index(['createdAt'])
 export class Course {
   @PrimaryGeneratedColumn('uuid')
   id: string;

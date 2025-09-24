@@ -1,7 +1,8 @@
-import { Controller, Post, Body, ValidationPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Post, Body, ValidationPipe, Get, Patch, UseGuards, Request } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignUpDto, SignInDto, RefreshTokenDto } from './dto/auth.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -30,5 +31,25 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
   async refreshToken(@Body(ValidationPipe) refreshTokenDto: RefreshTokenDto) {
     return await this.authService.refreshToken(refreshTokenDto.refreshToken);
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiResponse({ status: 200, description: 'User profile retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getProfile(@Request() req) {
+    return await this.authService.getProfile(req.user.id);
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  @ApiResponse({ status: 200, description: 'User profile updated successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async updateProfile(@Request() req, @Body(ValidationPipe) updateData: Partial<SignUpDto>) {
+    return await this.authService.updateProfile(req.user.id, updateData);
   }
 }

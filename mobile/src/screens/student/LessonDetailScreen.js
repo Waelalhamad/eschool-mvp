@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Alert,
   Linking,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useDispatch, useSelector } from 'react-redux';
@@ -152,21 +154,42 @@ const LessonDetailScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-white px-6 py-6 mb-4">
-        <Text className="text-2xl font-bold text-gray-800 mb-2">
-          {lesson.title}
-        </Text>
-        {lesson.description && (
-          <Text className="text-base text-gray-600 leading-6">
-            {lesson.description}
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
+      <ScrollView className="flex-1">
+        {/* Header */}
+        <View 
+          className="bg-gradient-to-br from-blue-600 to-indigo-700 px-6 py-8 mb-4"
+        >
+          <View className="flex-row items-center justify-between mb-4">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
+            >
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <View className="bg-white/20 px-3 py-1 rounded-full">
+              <Text className="text-white text-sm font-medium">
+                Lesson {lesson.order || 1}
+              </Text>
+            </View>
+          </View>
+          
+          <Text className="text-2xl font-bold text-white mb-2">
+            {lesson.title}
           </Text>
-        )}
-      </View>
+          {lesson.description && (
+            <Text className="text-blue-100 leading-6">
+              {lesson.description}
+            </Text>
+          )}
+        </View>
 
-      {/* YouTube Video with Watermark */}
-      <View className="mx-4 mb-6 rounded-2xl overflow-hidden shadow-lg" style={{ height: 220 }}>
+        {/* YouTube Video with Watermark */}
+        <View 
+          className="mx-4 mb-6 rounded-2xl overflow-hidden shadow-xl" 
+          style={{ height: 220 }}
+        >
         <WebView
           source={{
             html: `
@@ -236,45 +259,55 @@ const LessonDetailScreen = ({ route, navigation }) => {
             }
           }}
         />
-      </View>
-
-      {/* PDF Download */}
-      {lesson.pdfUrl && (
-        <TouchableOpacity 
-          className="bg-white mx-4 mb-4 p-4 rounded-2xl shadow-sm flex-row items-center"
-          onPress={downloadPDF}
-        >
-          <View className="bg-red-100 p-3 rounded-xl mr-4">
-            <Ionicons name="document-text" size={24} color="#DC2626" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-lg font-semibold text-gray-800">
-              Course Material
-            </Text>
-            <Text className="text-sm text-gray-600">
-              Download PDF resources
-            </Text>
-          </View>
-          <Ionicons name="download" size={20} color="#6B7280" />
-        </TouchableOpacity>
-      )}
-
-      {/* Quiz Section */}
-      {showQuiz && renderQuiz()}
-      
-      {lesson.quizPassed && (
-        <View className="bg-success-50 mx-4 mb-6 p-6 rounded-2xl border border-success-200">
-          <View className="flex-row items-center justify-center">
-            <Ionicons name="checkmark-circle" size={32} color="#059669" />
-            <Text className="text-xl font-bold text-success-700 ml-3">
-              Lesson Completed!
-            </Text>
-          </View>
-          <Text className="text-center text-success-600 mt-2">
-            You've successfully completed this lesson and can proceed to the next one.
-          </Text>
         </View>
-      )}
-    </ScrollView>
+
+        {/* PDF Download */}
+        {lesson.pdfUrl && (
+          <TouchableOpacity 
+            className="bg-white mx-4 mb-4 p-4 rounded-2xl shadow-lg flex-row items-center border border-gray-100"
+            onPress={downloadPDF}
+          >
+            <View 
+              className="p-3 rounded-xl mr-4"
+              style={{ backgroundColor: '#FEF2F2' }}
+            >
+              <Ionicons name="document-text" size={24} color="#DC2626" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-lg font-semibold text-gray-800">
+                Course Material
+              </Text>
+              <Text className="text-sm text-gray-600">
+                Download PDF resources
+              </Text>
+            </View>
+            <Ionicons name="download" size={20} color="#6B7280" />
+          </TouchableOpacity>
+        )}
+
+        {/* Quiz Section */}
+        {showQuiz && renderQuiz()}
+        
+        {lesson.quizPassed && (
+          <View 
+            className="mx-4 mb-6 p-6 rounded-2xl border-2"
+            style={{ 
+              backgroundColor: '#F0FDF4',
+              borderColor: '#BBF7D0'
+            }}
+          >
+            <View className="flex-row items-center justify-center">
+              <Ionicons name="checkmark-circle" size={32} color="#059669" />
+              <Text className="text-xl font-bold ml-3" style={{ color: '#065F46' }}>
+                Lesson Completed!
+              </Text>
+            </View>
+            <Text className="text-center mt-2" style={{ color: '#047857' }}>
+              You've successfully completed this lesson and can proceed to the next one.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable, Index } from 'typeorm';
 import { Course } from './course.entity';
 import { UploadRequest } from './upload-request.entity';
 
@@ -9,6 +9,9 @@ export enum UserRole {
 }
 
 @Entity()
+@Index(['email'], { unique: true })
+@Index(['role'])
+@Index(['createdAt'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;

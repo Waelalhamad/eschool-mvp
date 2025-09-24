@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalization } from "../context/LocalizationContext";
 
 // Auth Screens
 import LoginScreen from "../screens/auth/LoginScreen";
@@ -37,32 +38,66 @@ const AuthStack = () => (
   </Stack.Navigator>
 );
 
-const StudentTabs = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+const StudentTabs = () => {
+  const { t, isRTL } = useLocalization();
+  
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-        if (route.name === "Home") {
-          iconName = focused ? "home" : "home-outline";
-        } else if (route.name === "Courses") {
-          iconName = focused ? "book" : "book-outline";
-        } else if (route.name === "Profile") {
-          iconName = focused ? "person" : "person-outline";
-        }
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Courses") {
+            iconName = focused ? "book" : "book-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
+          }
 
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: "#3B82F6",
-      tabBarInactiveTintColor: "#6B7280",
-      headerShown: false,
-    })}
-  >
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Courses" component={CoursesScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
-  </Tab.Navigator>
-);
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#0EA5E9",
+        tabBarInactiveTintColor: "#6B7280",
+        headerShown: false,
+        tabBarStyle: {
+          borderRadius: isRTL ? 0 : 24,
+          borderTopLeftRadius: isRTL ? 24 : 24,
+          borderTopRightRadius: isRTL ? 0 : 24,
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 80,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 16,
+          elevation: 16,
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'Tajawal',
+          fontSize: 12,
+          fontWeight: '600',
+        },
+      })}
+    >
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ tabBarLabel: t('navigation.home') }}
+      />
+      <Tab.Screen 
+        name="Courses" 
+        component={CoursesScreen} 
+        options={{ tabBarLabel: t('navigation.courses') }}
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        options={{ tabBarLabel: t('navigation.profile') }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 const TeacherTabs = () => (
   <Tab.Navigator
@@ -171,6 +206,7 @@ const AdminStack = () => (
 
 const AppNavigator = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isRTL } = useLocalization();
 
   if (!isAuthenticated) {
     return <AuthStack />;
