@@ -2,31 +2,38 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearError } from '../../store/slices/authSlice';
+import { useLocalization } from '../../context/LocalizationContext';
+import CurvedCard from '../../components/CurvedCard';
+import CurvedButton from '../../components/CurvedButton';
+import CurvedInput from '../../components/CurvedInput';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((state) => state.auth);
+  const { t, isRTL } = useLocalization();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.error'), t('auth.emailRequired') + ' ' + t('auth.passwordRequired'));
       return;
     }
 
     try {
       await dispatch(login({ email, password })).unwrap();
     } catch (err) {
-      Alert.alert('Login Failed', err);
+      Alert.alert(t('auth.loginFailed'), err);
     }
   };
 
@@ -35,118 +42,165 @@ const LoginScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-100"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View className="flex-1 justify-center px-6">
-        <View 
-          className="bg-white rounded-3xl p-8 shadow-2xl"
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.15,
-            shadowRadius: 24,
-            elevation: 16,
-          }}
+    <SafeAreaView className="flex-1">
+      <StatusBar barStyle="dark-content" backgroundColor="#F0F9FF" />
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ 
+          backgroundColor: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
+          backgroundImage: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)'
+        }}
+      >
+        <ScrollView 
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
-          <View className="items-center mb-8">
-            <View 
-              className="w-20 h-20 rounded-2xl items-center justify-center mb-4 shadow-lg"
-              style={{
-                backgroundColor: '#3B82F6',
-                shadowColor: '#3B82F6',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.3,
-                shadowRadius: 12,
-                elevation: 8,
+          <View className="flex-1 justify-center px-6 py-8">
+            {/* Header Section with Curved Design */}
+            <View className="items-center mb-12">
+              {/* Modern Curved Logo Container */}
+              <View 
+                className="w-28 h-28 rounded-4xl items-center justify-center mb-6 shadow-2xl"
+                style={{
+                  backgroundColor: '#0EA5E9',
+                  shadowColor: '#0EA5E9',
+                  shadowOffset: { width: 0, height: 12 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 20,
+                  elevation: 15,
+                  transform: [{ rotate: '5deg' }]
+                }}
+              >
+                <Ionicons name="school" size={40} color="white" />
+              </View>
+              
+              <Text 
+                className="font-tajawal-bold text-5xl text-gray-800 mb-3 text-center"
+                style={{ textAlign: isRTL ? 'right' : 'center' }}
+              >
+                {t('auth.welcomeBack')}
+              </Text>
+              <Text 
+                className="font-tajawal text-xl text-gray-600 leading-7 text-center px-4"
+                style={{ textAlign: isRTL ? 'right' : 'center' }}
+              >
+                {t('auth.signInToContinue')}
+              </Text>
+            </View>
+
+            {/* Main Login Card with Super Curved Design */}
+            <CurvedCard 
+              containerStyle={{
+                borderRadius: 32,
+                padding: 32,
+                marginHorizontal: 8,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 20 },
+                shadowOpacity: 0.15,
+                shadowRadius: 40,
+                elevation: 20,
               }}
             >
-              <Ionicons name="school" size={36} color="white" />
-            </View>
-            <Text className="text-4xl font-bold text-center mb-2 text-gray-800">
-              Welcome Back
-            </Text>
-            <Text className="text-lg text-center text-gray-600 leading-6">
-              Sign in to continue your learning journey
-            </Text>
-          </View>
-
-          {/* Form Fields */}
-          <View className="space-y-6">
-            {/* Email Field */}
-            <View>
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
-                Email Address
-              </Text>
-              <View className="flex-row items-center border-2 border-gray-200 rounded-xl px-4 py-4 bg-gray-50">
-                <Ionicons name="mail-outline" size={20} color="#6B7280" />
-                <TextInput
-                  className="flex-1 ml-3 text-lg text-gray-800"
-                  placeholder="Enter your email"
+              {/* Form Fields */}
+              <View className="space-y-6">
+                {/* Email Field */}
+                <CurvedInput
+                  label={t('auth.emailAddress')}
+                  placeholder={t('auth.enterEmail')}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  placeholderTextColor="#9CA3AF"
+                  leftIcon="mail-outline"
+                  containerStyle={{
+                    borderRadius: 24,
+                    borderWidth: 2,
+                    backgroundColor: '#FAFAFA',
+                  }}
                 />
-              </View>
-            </View>
 
-            {/* Password Field */}
-            <View>
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
-                Password
-              </Text>
-              <View className="flex-row items-center border-2 border-gray-200 rounded-xl px-4 py-4 bg-gray-50">
-                <Ionicons name="lock-closed-outline" size={20} color="#6B7280" />
-                <TextInput
-                  className="flex-1 ml-3 text-lg text-gray-800"
-                  placeholder="Enter your password"
+                {/* Password Field */}
+                <CurvedInput
+                  label={t('auth.password')}
+                  placeholder={t('auth.enterPassword')}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
-                  placeholderTextColor="#9CA3AF"
+                  leftIcon="lock-closed-outline"
+                  containerStyle={{
+                    borderRadius: 24,
+                    borderWidth: 2,
+                    backgroundColor: '#FAFAFA',
+                  }}
                 />
               </View>
+
+              {/* Sign In Button with Gradient Effect */}
+              <CurvedButton
+                title={isLoading ? t('auth.signingIn') : `🚀 ${t('auth.signIn')}`}
+                onPress={handleLogin}
+                disabled={isLoading}
+                loading={isLoading}
+                variant="primary"
+                size="large"
+                fullWidth
+                style={{
+                  marginTop: 32,
+                  borderRadius: 28,
+                  shadowColor: '#0EA5E9',
+                  shadowOffset: { width: 0, height: 8 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 16,
+                  elevation: 12,
+                }}
+              />
+
+              {/* Footer with Curved Design */}
+              <View 
+                className="items-center mt-8 pt-6"
+                style={{ 
+                  borderTopWidth: 1, 
+                  borderTopColor: '#F3F4F6',
+                  borderTopLeftRadius: isRTL ? 0 : 20,
+                  borderTopRightRadius: isRTL ? 20 : 0,
+                }}
+              >
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('Register')}
+                  className="flex-row items-center"
+                  style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                >
+                  <Text className="font-tajawal text-gray-600 text-lg">
+                    {t('auth.dontHaveAccount')}{' '}
+                  </Text>
+                  <Text 
+                    className="font-tajawal-bold text-blue-600 text-lg"
+                    style={{ textDecorationLine: 'underline' }}
+                  >
+                    {t('auth.signUp')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </CurvedCard>
+
+            {/* Decorative Elements */}
+            <View className="absolute top-20 right-8 opacity-20">
+              <View 
+                className="w-16 h-16 rounded-full"
+                style={{ backgroundColor: '#A855F7' }}
+              />
+            </View>
+            <View className="absolute bottom-32 left-8 opacity-20">
+              <View 
+                className="w-12 h-12 rounded-full"
+                style={{ backgroundColor: '#22C55E' }}
+              />
             </View>
           </View>
-
-          {/* Sign In Button */}
-          <TouchableOpacity
-            className={`py-5 rounded-2xl mt-8 ${
-              isLoading ? 'bg-gray-300' : 'bg-gradient-to-r from-blue-600 to-indigo-600'
-            } shadow-lg`}
-            onPress={handleLogin}
-            disabled={isLoading}
-            style={{
-              shadowColor: '#3B82F6',
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.3,
-              shadowRadius: 12,
-              elevation: 8,
-            }}
-          >
-            <Text className="text-white text-xl font-bold text-center">
-              {isLoading ? '⏳ Signing in...' : '🚀 Sign In'}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Footer */}
-          <View className="items-center mt-8">
-            <TouchableOpacity 
-              onPress={() => navigation.navigate('Register')}
-              className="flex-row items-center"
-            >
-              <Text className="text-gray-600 font-medium">
-                Don't have an account?{' '}
-              </Text>
-              <Text className="text-blue-600 font-bold">Sign up</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
