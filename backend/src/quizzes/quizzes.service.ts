@@ -1,22 +1,22 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Lesson } from '../entities/lesson.entity';
-import { Quiz } from '../entities/quiz.entity';
-import { QuizSubmission } from '../entities/quiz-submission.entity';
-import { User } from '../entities/user.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Lesson, LessonDocument } from '../schemas/lesson.schema';
+import { Quiz, QuizDocument } from '../schemas/quiz.schema';
+import { QuizSubmission, QuizSubmissionDocument } from '../schemas/quizsubmission.schema';
+import { User, UserDocument } from '../schemas/user.schema';
 
 @Injectable()
 export class QuizzesService {
   constructor(
-    @InjectRepository(Lesson)
-    private lessonRepository: Repository<Lesson>,
-    @InjectRepository(Quiz)
-    private quizRepository: Repository<Quiz>,
-    @InjectRepository(QuizSubmission)
-    private quizSubmissionRepository: Repository<QuizSubmission>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectModel(Lesson.name)
+    private lessonModel: Model<LessonDocument>,
+    @InjectModel(Quiz.name)
+    private quizModel: Model<QuizDocument>,
+    @InjectModel(QuizSubmission.name)
+    private quizSubmissionModel: Model<QuizSubmissionDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
   ) {}
 
   async submitQuiz(lessonId: string, answers: number[], userId: string) {
@@ -54,7 +54,7 @@ export class QuizzesService {
     const passed = score >= lesson.quiz.passingScore;
 
     // Save submission
-    const submission = this.quizSubmissionRepository.create({
+    const submission = new this.quizSubmissionModel({
       studentId: userId,
       quizId: lesson.quiz.id,
       answers,
@@ -62,7 +62,7 @@ export class QuizzesService {
       passed,
     });
 
-    await this.quizSubmissionRepository.save(submission);
+    await submission.save();
 
     return {
       score,
