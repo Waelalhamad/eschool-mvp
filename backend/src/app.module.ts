@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { MongooseModule } from "@nestjs/mongoose";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { AuthModule } from "./auth/auth.module";
@@ -19,18 +19,7 @@ import { AppService } from "./app.service";
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: process.env.DB_HOST || "localhost",
-      port: parseInt(process.env.DB_PORT) || 5432,
-      username: process.env.DB_USER || "postgres",
-      password: process.env.DB_PASSWORD || "password",
-      database: process.env.DB_NAME || "eschool",
-      entities: [__dirname + "/**/*.entity{.ts,.js}"],
-      synchronize: process.env.NODE_ENV !== "production",
-      migrations: [__dirname + "/migrations/*{.ts,.js}"],
-      migrationsRun: true,
-    }),
+    MongooseModule.forRoot(process.env.MONGODB_URI || "mongodb://localhost:27017/eschool"),
     PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || "secretkey",

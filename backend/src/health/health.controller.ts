@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { 
   HealthCheckService, 
   HealthCheck, 
-  TypeOrmHealthIndicator,
+  MongooseHealthIndicator,
   HttpHealthIndicator 
 } from '@nestjs/terminus';
 
@@ -12,7 +12,7 @@ import {
 export class HealthController {
   constructor(
     private health: HealthCheckService,
-    private db: TypeOrmHealthIndicator,
+    private db: MongooseHealthIndicator,
     private http: HttpHealthIndicator,
   ) {}
 
@@ -21,7 +21,7 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.db.pingCheck('database'),
+      () => this.db.pingCheck('mongodb'),
       () => this.http.pingCheck('api', 'http://localhost:3000'),
     ]);
   }

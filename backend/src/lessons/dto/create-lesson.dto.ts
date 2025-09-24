@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsMongoId, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateLessonDto {
@@ -7,37 +7,32 @@ export class CreateLessonDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ description: 'Lesson description' })
+  @ApiPropertyOptional({ description: 'Lesson description' })
   @IsString()
-  @IsNotEmpty()
-  description: string;
+  @IsOptional()
+  description?: string;
 
-  @ApiProperty({ description: 'Lesson content' })
+  @ApiProperty({ description: 'YouTube video ID' })
   @IsString()
   @IsNotEmpty()
-  content: string;
+  youtubeId: string;
+
+  @ApiProperty({ description: 'Lesson order' })
+  @IsNumber()
+  order: number;
+
+  @ApiPropertyOptional({ description: 'PDF URL' })
+  @IsString()
+  @IsOptional()
+  pdfUrl?: string;
+
+  @ApiPropertyOptional({ description: 'Is lesson published' })
+  @IsBoolean()
+  @IsOptional()
+  isPublished?: boolean;
 
   @ApiProperty({ description: 'Course ID' })
-  @IsUUID()
+  @IsMongoId()
   @IsNotEmpty()
   courseId: string;
-
-  @ApiPropertyOptional({ description: 'Lesson order' })
-  @IsNumber()
-  @IsOptional()
-  order?: number;
-
-  @ApiPropertyOptional({ description: 'Video URL' })
-  @IsString()
-  @IsOptional()
-  videoUrl?: string;
-
-  @ApiPropertyOptional({ description: 'Duration in minutes' })
-  @IsNumber()
-  @IsOptional()
-  duration?: number;
-
-  @ApiPropertyOptional({ description: 'Is lesson free' })
-  @IsOptional()
-  isFree?: boolean;
 }

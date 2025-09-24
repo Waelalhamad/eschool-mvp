@@ -1,33 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Lesson } from '../entities/lesson.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Lesson, LessonDocument } from '../schemas/lesson.schema';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 
 @Injectable()
 export class LessonsService {
   constructor(
-    @InjectRepository(Lesson)
-    private lessonRepository: Repository<Lesson>,
+    @InjectModel(Lesson.name)
+    private lessonModel: Model<LessonDocument>,
   ) {}
 
   async create(createLessonDto: CreateLessonDto): Promise<Lesson> {
-    const lesson = this.lessonRepository.create(createLessonDto);
-    return await this.lessonRepository.save(lesson);
+    const lesson = new this.lessonModel(createLessonDto);
+    return await lesson.save();
   }
 
   async findAll(): Promise<Lesson[]> {
-    return await this.lessonRepository.find({
-      relations: ['course'],
-    });
+    return await this.lessonModel.find().populate('courseId').exec();
   }
 
   async findOne(id: string): Promise<Lesson> {
-    const lesson = await this.lessonRepository.findOne({
-      where: { id },
-      relations: ['course'],
-    });
+    const lesson = await this.lessonModel.findById(id).populate('courseId').exec();
 
     if (!lesson) {
       throw new NotFoundException(`Lesson with ID ${id} not found`);
@@ -37,14 +32,24 @@ export class LessonsService {
   }
 
   async update(id: string, updateLessonDto: UpdateLessonDto): Promise<Lesson> {
-    const lesson = await this.findOne(id);
-    
-    Object.assign(lesson, updateLessonDto);
-    return await this.lessonRepository.save(lesson);
+    const lesson = await this.lessonModel.findByIdAndUpdate(
+      id,
+      updateLessonDto,
+      { new: true }
+    ).populate('courseId').exec();
+
+    if (!lesson) {
+      throw new NotFoundException(`Lesson with ID ${id} not found`);
+    }
+
+    return lesson;
   }
 
   async remove(id: string): Promise<void> {
-    const lesson = await this.findOne(id);
-    await this.lessonRepository.remove(lesson);
+    const lesson = await this.lessonModel.findByIdAndDelete(id).exec();
+    
+    if (!lesson) {
+      throw new NotFoundException(`Lesson with ID ${id} not found`);
+    }
   }
 }
