@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { LessonsController } from './lessons.controller';
 import { LessonsService } from './lessons.service';
-import { Lesson } from '../entities/lesson.entity';
-import { Course } from '../entities/course.entity';
-import { Quiz } from '../entities/quiz.entity';
+import { Lesson, LessonSchema } from '../schemas/lesson.schema';
+import { Course, CourseSchema } from '../schemas/course.schema';
+import { Quiz, QuizSchema } from '../schemas/quiz.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Lesson, Course, Quiz])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Lesson.name, schema: LessonSchema },
+      { name: Course.name, schema: CourseSchema },
+      { name: Quiz.name, schema: QuizSchema },
+    ]),
+  ],
   controllers: [LessonsController],
   providers: [LessonsService],
   exports: [LessonsService],
