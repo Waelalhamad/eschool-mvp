@@ -1,8 +1,10 @@
-// babel.config.js
 module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
-    plugins: ['nativewind/babel'],
+    plugins: [
+      // Only add nativewind if it's properly installed
+      ...(process.env.NODE_ENV !== 'production' ? [] : []),
+    ],
   };
 };

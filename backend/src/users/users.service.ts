@@ -22,11 +22,17 @@ export class UsersService {
   }
 
   async updateProfile(id: string, updateProfileDto: UpdateProfileDto): Promise<User> {
-    const user = await this.findById(id);
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      updateProfileDto,
+      { new: true }
+    );
     
-    Object.assign(user, updateProfileDto);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     
-    return await user.save();
+    return user;
   }
 
   async getProfile(id: string) {
