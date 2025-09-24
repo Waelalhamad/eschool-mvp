@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UploadRequest, UploadRequestDocument } from '../schemas/uploadrequest.schema';
-import { UploadStatus, UploadStatusDocument } from '../schemas/uploadstatus.schema';
+import { UploadRequest, UploadRequestDocument, UploadStatus } from '../schemas/upload-request.schema';
 import { Lesson, LessonDocument } from '../schemas/lesson.schema';
 import { Quiz, QuizDocument } from '../schemas/quiz.schema';
 import { CreateUploadRequestDto } from './dto/upload.dto';
@@ -28,7 +27,7 @@ export class UploadsService {
   }
 
   async getPendingUploads() {
-    return await this.uploadRequestRepository.find({
+    return await this.uploadRequestModel.find({
       where: { status: UploadStatus.PENDING },
       relations: ['teacher'],
       order: { createdAt: 'ASC' },
@@ -36,7 +35,7 @@ export class UploadsService {
   }
 
   async approveUpload(uploadId: string, adminNotes?: string) {
-    const upload = await this.uploadRequestRepository.findOne({
+    const upload = await this.uploadRequestModel.findOne({
       where: { id: uploadId },
     });
 
@@ -56,7 +55,7 @@ export class UploadsService {
   }
 
   async rejectUpload(uploadId: string, adminNotes?: string) {
-    const upload = await this.uploadRequestRepository.findOne({
+    const upload = await this.uploadRequestModel.findOne({
       where: { id: uploadId },
     });
 

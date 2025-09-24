@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Lesson, LessonDocument } from '../schemas/lesson.schema';
 import { Quiz, QuizDocument } from '../schemas/quiz.schema';
-import { QuizSubmission, QuizSubmissionDocument } from '../schemas/quizsubmission.schema';
+import { QuizSubmission, QuizSubmissionDocument } from '../schemas/quiz-submission.schema';
 import { User, UserDocument } from '../schemas/user.schema';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class QuizzesService {
   ) {}
 
   async submitQuiz(lessonId: string, answers: number[], userId: string) {
-    const lesson = await this.lessonRepository.findOne({
+    const lesson = await this.lessonModel.findOne({
       where: { id: lessonId },
       relations: ['quiz', 'course'],
     });
@@ -30,7 +30,7 @@ export class QuizzesService {
     }
 
     // Check if user has access to this course
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { id: userId },
       relations: ['coursesUnlocked'],
     });

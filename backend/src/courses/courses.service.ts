@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Course, CourseDocument } from '../schemas/course.schema';
 import { User, UserDocument } from '../schemas/user.schema';
 import { Lesson, LessonDocument } from '../schemas/lesson.schema';
-import { QuizSubmission, QuizSubmissionDocument } from '../schemas/quizsubmission.schema';
+import { QuizSubmission, QuizSubmissionDocument } from '../schemas/quiz-submission.schema';
 
 @Injectable()
 export class CoursesService {
@@ -20,7 +20,7 @@ export class CoursesService {
   ) {}
 
   async getUnlockedCourses(userId: string) {
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { id: userId },
       relations: ['coursesUnlocked'],
     });
@@ -30,7 +30,7 @@ export class CoursesService {
 
   async getCourseLessons(courseId: string, userId: string) {
     // Check if user has access to this course
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { id: userId },
       relations: ['coursesUnlocked'],
     });
@@ -41,14 +41,14 @@ export class CoursesService {
     }
 
     // Get all lessons for the course
-    const lessons = await this.lessonRepository.find({
+    const lessons = await this.lessonModel.find({
       where: { courseId, isPublished: true },
       relations: ['quiz'],
       order: { order: 'ASC' },
     });
 
     // Get user's quiz submissions to determine progress
-    const submissions = await this.quizSubmissionRepository.find({
+    const submissions = await this.quizSubmissionModel.find({
       where: { studentId: userId },
       relations: ['quiz', 'quiz.lesson'],
     });

@@ -18,7 +18,7 @@ export class CouponsService {
   ) {}
 
   async redeemCoupon(code: string, userId: string) {
-    const coupon = await this.couponRepository.findOne({
+    const coupon = await this.couponModel.findOne({
       where: { code, isActive: true },
       relations: ['allowedCourses'],
     });
@@ -35,7 +35,7 @@ export class CouponsService {
       throw new BadRequestException('Coupon usage limit exceeded');
     }
 
-    const user = await this.userRepository.findOne({
+    const user = await this.userModel.findOne({
       where: { id: userId },
       relations: ['coursesUnlocked'],
     });
@@ -61,7 +61,7 @@ export class CouponsService {
   async createCoupon(createCouponDto: CreateCouponDto) {
     const { allowedCourseIds, ...couponData } = createCouponDto;
     
-    const courses = await this.courseRepository.findByIds(allowedCourseIds);
+    const courses = await this.courseModel.find({ _id: { $in: allowedCourseIds } });
     
     const coupon = new this.couponModel({
       ...couponData,
@@ -73,7 +73,7 @@ export class CouponsService {
   }
 
   async getAllCoupons() {
-    return await this.couponRepository.find({
+    return await this.couponModel.find({
       relations: ['allowedCourses'],
       order: { createdAt: 'DESC' },
     });
