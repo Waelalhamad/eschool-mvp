@@ -1,5 +1,5 @@
 import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
-import { UploadType } from '../../entities/upload-request.entity';
+import { UploadType } from '../../schemas/upload-request.schema';
 
 export class CreateUploadRequestDto {
   @IsEnum(UploadType)

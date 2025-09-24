@@ -4,7 +4,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { QuizzesService } from './quizzes.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '../entities/user.entity';
+import { UserRole } from '../schemas/user.schema';
 import { SubmitQuizDto } from './dto/quiz.dto';
 
 @ApiTags('Quizzes')

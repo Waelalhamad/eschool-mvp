@@ -4,7 +4,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UploadsService } from './uploads.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '../entities/user.entity';
+import { UserRole } from '../schemas/user.schema';
 import { CreateUploadRequestDto, ReviewUploadDto } from './dto/upload.dto';
 
 @ApiTags('Uploads')
