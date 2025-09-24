@@ -1,20 +1,20 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Coupon } from '../entities/coupon.entity';
-import { User } from '../entities/user.entity';
-import { Course } from '../entities/course.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Coupon, CouponDocument } from '../schemas/coupon.schema';
+import { User, UserDocument } from '../schemas/user.schema';
+import { Course, CourseDocument } from '../schemas/course.schema';
 import { CreateCouponDto } from './dto/coupon.dto';
 
 @Injectable()
 export class CouponsService {
   constructor(
-    @InjectRepository(Coupon)
-    private couponRepository: Repository<Coupon>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Course)
-    private courseRepository: Repository<Course>,
+    @InjectModel(Coupon.name)
+    private couponModel: Model<CouponDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
+    @InjectModel(Course.name)
+    private courseModel: Model<CourseDocument>,
   ) {}
 
   async redeemCoupon(code: string, userId: string) {
@@ -46,11 +46,11 @@ export class CouponsService {
     );
 
     user.coursesUnlocked.push(...newCourses);
-    await this.userRepository.save(user);
+    await user.save();
 
     // Increment usage count
     coupon.usedCount++;
-    await this.couponRepository.save(coupon);
+    await coupon.save();
 
     return {
       message: 'Coupon redeemed successfully',
@@ -63,13 +63,13 @@ export class CouponsService {
     
     const courses = await this.courseRepository.findByIds(allowedCourseIds);
     
-    const coupon = this.couponRepository.create({
+    const coupon = new this.couponModel({
       ...couponData,
       allowedCourses: courses,
       expiresAt: createCouponDto.expiresAt ? new Date(createCouponDto.expiresAt) : null,
     });
 
-    return await this.couponRepository.save(coupon);
+    return await coupon.save();
   }
 
   async getAllCoupons() {

@@ -1,29 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UploadRequest, UploadStatus } from '../entities/upload-request.entity';
-import { Lesson } from '../entities/lesson.entity';
-import { Quiz } from '../entities/quiz.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { UploadRequest, UploadRequestDocument } from '../schemas/uploadrequest.schema';
+import { UploadStatus, UploadStatusDocument } from '../schemas/uploadstatus.schema';
+import { Lesson, LessonDocument } from '../schemas/lesson.schema';
+import { Quiz, QuizDocument } from '../schemas/quiz.schema';
 import { CreateUploadRequestDto } from './dto/upload.dto';
 
 @Injectable()
 export class UploadsService {
   constructor(
-    @InjectRepository(UploadRequest)
-    private uploadRequestRepository: Repository<UploadRequest>,
-    @InjectRepository(Lesson)
-    private lessonRepository: Repository<Lesson>,
-    @InjectRepository(Quiz)
-    private quizRepository: Repository<Quiz>,
+    @InjectModel(UploadRequest.name)
+    private uploadRequestModel: Model<UploadRequestDocument>,
+    @InjectModel(Lesson.name)
+    private lessonModel: Model<LessonDocument>,
+    @InjectModel(Quiz.name)
+    private quizModel: Model<QuizDocument>,
   ) {}
 
   async createUploadRequest(createUploadDto: CreateUploadRequestDto, teacherId: string) {
-    const uploadRequest = this.uploadRequestRepository.create({
+    const uploadRequest = new this.uploadRequestModel({
       ...createUploadDto,
       teacherId,
     });
 
-    return await this.uploadRequestRepository.save(uploadRequest);
+    return await uploadRequest.save();
   }
 
   async getPendingUploads() {
@@ -46,7 +47,7 @@ export class UploadsService {
     upload.status = UploadStatus.APPROVED;
     upload.adminNotes = adminNotes;
     
-    await this.uploadRequestRepository.save(upload);
+    await upload.save();
 
     // Create the actual lesson/quiz based on the upload type
     await this.processApprovedUpload(upload);
@@ -66,7 +67,7 @@ export class UploadsService {
     upload.status = UploadStatus.REJECTED;
     upload.adminNotes = adminNotes;
     
-    return await this.uploadRequestRepository.save(upload);
+    return await upload.save();
   }
 
   private async processApprovedUpload(upload: UploadRequest) {
@@ -75,7 +76,7 @@ export class UploadsService {
     switch (upload.type) {
       case 'video':
         // Create lesson with video
-        const lesson = this.lessonRepository.create({
+        const lesson = new this.lessonModel({
           title: metadata.title,
           description: metadata.description,
           youtubeId: metadata.youtubeId,
@@ -85,16 +86,16 @@ export class UploadsService {
           isPublished: true,
         });
 
-        const savedLesson = await this.lessonRepository.save(lesson);
+        const savedLesson = await lesson.save();
 
         // Create quiz if provided
         if (metadata.quiz) {
-          const quiz = this.quizRepository.create({
+          const quiz = new this.quizModel({
             questions: metadata.quiz.questions,
             passingScore: metadata.quiz.passingScore || 70,
             lesson: savedLesson,
           });
-          await this.quizRepository.save(quiz);
+          await quiz.save();
         }
         break;
 

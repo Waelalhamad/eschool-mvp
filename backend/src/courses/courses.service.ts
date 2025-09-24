@@ -1,22 +1,22 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Course } from '../entities/course.entity';
-import { User } from '../entities/user.entity';
-import { Lesson } from '../entities/lesson.entity';
-import { QuizSubmission } from '../entities/quiz-submission.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Course, CourseDocument } from '../schemas/course.schema';
+import { User, UserDocument } from '../schemas/user.schema';
+import { Lesson, LessonDocument } from '../schemas/lesson.schema';
+import { QuizSubmission, QuizSubmissionDocument } from '../schemas/quizsubmission.schema';
 
 @Injectable()
 export class CoursesService {
   constructor(
-    @InjectRepository(Course)
-    private courseRepository: Repository<Course>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Lesson)
-    private lessonRepository: Repository<Lesson>,
-    @InjectRepository(QuizSubmission)
-    private quizSubmissionRepository: Repository<QuizSubmission>,
+    @InjectModel(Course.name)
+    private courseModel: Model<CourseDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
+    @InjectModel(Lesson.name)
+    private lessonModel: Model<LessonDocument>,
+    @InjectModel(QuizSubmission.name)
+    private quizSubmissionModel: Model<QuizSubmissionDocument>,
   ) {}
 
   async getUnlockedCourses(userId: string) {
