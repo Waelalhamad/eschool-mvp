@@ -1,8 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn, Index } from 'typeorm';
 import { Course } from './course.entity';
 import { Quiz } from './quiz.entity';
 
 @Entity()
+@Index(['courseId'])
+@Index(['order'])
+@Index(['isPublished'])
 export class Lesson {
   @PrimaryGeneratedColumn('uuid')
   id: string;

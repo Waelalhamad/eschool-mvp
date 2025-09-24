@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,47 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { couponsAPI } from '../../services/api';
+import { redeemCoupon, clearError, clearLastRedeemed } from '../../store/slices/couponsSlice';
 
 const RedeemCouponScreen = ({ navigation }) => {
   const [couponCode, setCouponCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { isLoading, error, lastRedeemed } = useSelector((state) => state.coupons);
+
+  useEffect(() => {
+    // Clear any previous errors when component mounts
+    dispatch(clearError());
+    
+    // Clear last redeemed when component unmounts
+    return () => {
+      dispatch(clearLastRedeemed());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Redemption Failed', error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (lastRedeemed) {
+      Alert.alert(
+        '🎉 Success!',
+        `Coupon redeemed successfully!\n\nYou've unlocked ${lastRedeemed.unlockedCourses?.length || 0} course(s). Happy learning!`,
+        [
+          { 
+            text: 'Start Learning', 
+            onPress: () => navigation.goBack() 
+          }
+        ]
+      );
+    }
+  }, [lastRedeemed]);
 
   const handleRedeemCoupon = async () => {
     if (!couponCode.trim()) {
@@ -21,86 +55,129 @@ const RedeemCouponScreen = ({ navigation }) => {
       return;
     }
 
-    setIsLoading(true);
     try {
-      const result = await couponsAPI.redeemCoupon(couponCode.trim().toUpperCase());
-      Alert.alert(
-        '🎉 Success!',
-        `Coupon redeemed successfully!\n\nYou've unlocked ${result.unlockedCourses.length} course(s). Happy learning!`,
-        [{ text: 'Start Learning', onPress: () => navigation.goBack() }]
-      );
-    } catch (error) {
-      Alert.alert(
-        'Redemption Failed', 
-        error.response?.data?.message || 'Invalid or expired coupon code'
-      );
-    } finally {
-      setIsLoading(false);
+      await dispatch(redeemCoupon(couponCode.trim().toUpperCase())).unwrap();
+    } catch (err) {
+      // Error is handled by useEffect
     }
   };
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-gray-50"
+      className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-100"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View className="flex-1 justify-center px-6">
-        <View className="bg-white rounded-3xl p-8 shadow-xl">
-          {/* Icon and Title */}
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="flex-1 justify-center px-6 py-8">
+          {/* Header */}
           <View className="items-center mb-8">
-            <View className="bg-gradient-to-br from-pink-500 to-purple-600 w-20 h-20 rounded-2xl items-center justify-center mb-4 shadow-lg">
-              <Ionicons name="gift" size={36} color="white" />
+            <View 
+              className="w-24 h-24 rounded-3xl items-center justify-center mb-6 shadow-xl"
+              style={{
+                backgroundColor: '#8B5CF6',
+                shadowColor: '#8B5CF6',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.3,
+                shadowRadius: 16,
+                elevation: 12,
+              }}
+            >
+              <Ionicons name="gift" size={40} color="white" />
             </View>
-            <Text className="text-3xl font-bold text-gray-800 mb-2">
+            <Text className="text-4xl font-bold text-gray-800 mb-3 text-center">
               Redeem Coupon
             </Text>
-            <Text className="text-base text-gray-600 text-center leading-6">
+            <Text className="text-lg text-gray-600 text-center leading-6 px-4">
               Enter your coupon code below to unlock exclusive courses and start your learning journey
             </Text>
           </View>
 
-          {/* Input Field */}
-          <View className="mb-6">
-            <Text className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-              Coupon Code
-            </Text>
-            <TextInput
-              className="border-2 border-gray-200 px-4 py-4 rounded-xl text-lg font-mono bg-gray-50 text-center tracking-widest"
-              placeholder="ENTER-CODE-HERE"
-              value={couponCode}
-              onChangeText={(text) => setCouponCode(text.toUpperCase())}
-              autoCapitalize="characters"
-              placeholderTextColor="#9CA3AF"
-              maxLength={20}
-            />
-          </View>
-
-          {/* Redeem Button */}
-          <TouchableOpacity
-            className={`py-4 rounded-xl ${
-              isLoading ? 'bg-primary-300' : 'bg-primary-600'
-            } shadow-lg`}
-            onPress={handleRedeemCoupon}
-            disabled={isLoading || !couponCode.trim()}
+          {/* Main Card */}
+          <View 
+            className="bg-white rounded-3xl p-8 shadow-2xl"
             style={{
-              shadowColor: '#3B82F6',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 8,
-              elevation: 8,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.15,
+              shadowRadius: 24,
+              elevation: 16,
             }}
           >
-            <Text className="text-white text-lg font-bold text-center">
-              {isLoading ? 'Redeeming...' : '🎁 Redeem Coupon'}
-            </Text>
-          </TouchableOpacity>
+            {/* Input Section */}
+            <View className="mb-8">
+              <Text className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">
+                Coupon Code
+              </Text>
+              <View 
+                className="border-2 border-gray-200 px-6 py-5 rounded-2xl bg-gray-50"
+                style={{ borderColor: couponCode ? '#8B5CF6' : '#E5E7EB' }}
+              >
+                <TextInput
+                  className="text-xl font-mono text-center tracking-widest text-gray-800"
+                  placeholder="ENTER-CODE-HERE"
+                  value={couponCode}
+                  onChangeText={(text) => setCouponCode(text.toUpperCase())}
+                  autoCapitalize="characters"
+                  placeholderTextColor="#9CA3AF"
+                  maxLength={25}
+                  autoFocus
+                />
+              </View>
+              {couponCode && (
+                <Text className="text-xs text-gray-500 mt-2 text-center">
+                  {couponCode.length}/25 characters
+                </Text>
+              )}
+            </View>
 
-          {/* Help Text */}
-          <Text className="text-sm text-gray-500 text-center mt-6 leading-5">
-            💡 Tip: Coupon codes are case-insensitive and can contain letters, numbers, and dashes
-          </Text>
+            {/* Redeem Button */}
+            <TouchableOpacity
+              className={`py-5 rounded-2xl ${
+                isLoading || !couponCode.trim() 
+                  ? 'bg-gray-300' 
+                  : 'bg-gradient-to-r from-purple-600 to-blue-600'
+              } shadow-lg`}
+              onPress={handleRedeemCoupon}
+              disabled={isLoading || !couponCode.trim()}
+              style={{
+                shadowColor: '#8B5CF6',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.3,
+                shadowRadius: 12,
+                elevation: 8,
+              }}
+            >
+              <Text className="text-white text-xl font-bold text-center">
+                {isLoading ? '⏳ Redeeming...' : '🎁 Redeem Coupon'}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Help Section */}
+            <View className="mt-8 p-4 bg-blue-50 rounded-2xl">
+              <View className="flex-row items-center mb-2">
+                <Ionicons name="bulb" size={20} color="#3B82F6" />
+                <Text className="text-blue-800 font-semibold ml-2">Quick Tips</Text>
+              </View>
+              <Text className="text-blue-700 text-sm leading-5">
+                • Coupon codes are case-insensitive{'\n'}
+                • Can contain letters, numbers, and dashes{'\n'}
+                • Make sure you have a stable internet connection
+              </Text>
+            </View>
+          </View>
+
+          {/* Footer */}
+          <View className="items-center mt-8">
+            <TouchableOpacity 
+              onPress={() => navigation.goBack()}
+              className="flex-row items-center"
+            >
+              <Ionicons name="arrow-back" size={20} color="#6B7280" />
+              <Text className="text-gray-600 ml-2 font-medium">Back to Home</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
