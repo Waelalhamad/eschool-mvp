@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Course, CourseDocument } from '../schemas/course.schema';
@@ -20,12 +20,16 @@ export class CoursesService {
   ) {}
 
   async getUnlockedCourses(userId: string) {
-    const user = await this.userModel.findOne({
-      where: { id: userId },
-      relations: ['coursesUnlocked'],
+    const user = await this.userModel.findById(userId).populate({
+      path: 'coursesUnlocked',
+      model: 'Course'
     });
 
-    return user.coursesUnlocked.filter(course => course.isActive);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return (user.coursesUnlocked as any[]).filter(course => course.isActive);
   }
 
   async getCourseLessons(courseId: string, userId: string) {
@@ -35,16 +39,16 @@ export class CoursesService {
       relations: ['coursesUnlocked'],
     });
 
-    const hasAccess = user.coursesUnlocked.some(course => course.id === courseId);
+    const hasAccess = user.coursesUnlocked.some(course => course._id.toString() === courseId);
     if (!hasAccess) {
       throw new ForbiddenException('You do not have access to this course');
     }
 
     // Get all lessons for the course
     const lessons = await this.lessonModel.find({
-      where: { courseId, isPublished: true },
+      where: { courseId: courseId, isPublished: true },
       relations: ['quiz'],
-      order: { order: 'ASC' },
+      order: { order: 1 },
     });
 
     // Get user's quiz submissions to determine progress
@@ -55,7 +59,7 @@ export class CoursesService {
 
     // Mark lessons as unlocked based on quiz completion
     const lessonsWithProgress = lessons.map((lesson, index) => {
-      const submission = submissions.find(sub => sub.quiz.lesson.id === lesson.id);
+      const submission = submissions.find(sub => sub.quiz._id.toString() === lesson.quiz?._id.toString());
       const isPassed = submission?.passed || false;
       
       // First lesson is always unlocked, others require previous lesson completion

@@ -137,3 +137,5 @@ const TeacherHomeScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
+
+export default TeacherHomeScreen;

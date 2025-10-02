@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,28 +6,33 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
   StatusBar,
-} from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import { redeemCoupon, clearError, clearLastRedeemed } from '../../store/slices/couponsSlice';
-import { useLocalization } from '../../context/LocalizationContext';
-import CurvedCard from '../../components/CurvedCard';
-import CurvedButton from '../../components/CurvedButton';
-import CurvedInput from '../../components/CurvedInput';
+  TouchableOpacity,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  redeemCoupon,
+  clearError,
+  clearLastRedeemed,
+} from "../../store/slices/couponsSlice";
+import { useLocalization } from "../../context/LocalizationContext";
+import CurvedCard from "../../components/CurvedCard";
+import CurvedButton from "../../components/CurvedButton";
+import CurvedInput from "../../components/CurvedInput";
 
 const RedeemCouponScreen = ({ navigation }) => {
-  const [couponCode, setCouponCode] = useState('');
+  const [couponCode, setCouponCode] = useState("");
   const dispatch = useDispatch();
-  const { isLoading, error, lastRedeemed } = useSelector((state) => state.coupons);
+  const { isLoading, error, lastRedeemed } = useSelector(
+    (state) => state.coupons
+  );
   const { t, isRTL } = useLocalization();
 
   useEffect(() => {
-    // Clear any previous errors when component mounts
     dispatch(clearError());
-    
-    // Clear last redeemed when component unmounts
+
     return () => {
       dispatch(clearLastRedeemed());
     };
@@ -35,20 +40,24 @@ const RedeemCouponScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('Redemption Failed', error);
+      Alert.alert("Redemption Failed", error);
     }
   }, [error]);
 
   useEffect(() => {
     if (lastRedeemed) {
       Alert.alert(
-        t('coupon.success'),
-        t('coupon.couponRedeemedSuccess') + '\n\n' + t('coupon.unlockedCourses', { count: lastRedeemed.unlockedCourses?.length || 0 }),
+        t("coupon.success"),
+        t("coupon.couponRedeemedSuccess") +
+          "\n\n" +
+          t("coupon.unlockedCourses", {
+            count: lastRedeemed.unlockedCourses?.length || 0,
+          }),
         [
-          { 
-            text: t('coupon.startLearning'), 
-            onPress: () => navigation.goBack() 
-          }
+          {
+            text: t("coupon.startLearning"),
+            onPress: () => navigation.goBack(),
+          },
         ]
       );
     }
@@ -56,7 +65,7 @@ const RedeemCouponScreen = ({ navigation }) => {
 
   const handleRedeemCoupon = async () => {
     if (!couponCode.trim()) {
-      Alert.alert(t('common.error'), t('coupon.couponCode') + ' ' + t('auth.emailRequired'));
+      Alert.alert(t("common.error"), "Please enter a coupon code");
       return;
     }
 
@@ -68,61 +77,79 @@ const RedeemCouponScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F9FF" />
       <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ 
-          backgroundColor: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
-          backgroundImage: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)'
-        }}
+        style={{ flex: 1, backgroundColor: "#F0F9FF" }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView 
-          className="flex-1"
+        <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 justify-center px-6 py-8">
-            {/* Header Section with Curved Design */}
-            <View className="items-center mb-12">
-              {/* Modern Curved Gift Container */}
-              <View 
-                className="w-32 h-32 rounded-5xl items-center justify-center mb-8 shadow-2xl"
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              paddingHorizontal: 24,
+              paddingVertical: 32,
+            }}
+          >
+            {/* Header Section */}
+            <View style={{ alignItems: "center", marginBottom: 48 }}>
+              {/* Gift Container */}
+              <View
                 style={{
-                  backgroundColor: '#A855F7',
-                  shadowColor: '#A855F7',
+                  width: 128,
+                  height: 128,
+                  borderRadius: 32,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 32,
+                  backgroundColor: "#A855F7",
+                  shadowColor: "#A855F7",
                   shadowOffset: { width: 0, height: 16 },
                   shadowOpacity: 0.4,
                   shadowRadius: 24,
                   elevation: 20,
-                  transform: [{ rotate: '8deg' }]
+                  transform: [{ rotate: "8deg" }],
                 }}
               >
                 <Ionicons name="gift" size={48} color="white" />
               </View>
-              
-              <Text 
-                className="font-tajawal-bold text-5xl text-gray-800 mb-4 text-center"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+
+              <Text
+                style={{
+                  fontSize: 36,
+                  fontWeight: "bold",
+                  color: "#1F2937",
+                  marginBottom: 16,
+                  textAlign: isRTL ? "right" : "center",
+                }}
               >
-                {t('coupon.redeemCoupon')}
+                {t("coupon.redeemCoupon")}
               </Text>
-              <Text 
-                className="font-tajawal text-xl text-gray-600 text-center leading-7 px-4"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: "#6B7280",
+                  textAlign: isRTL ? "right" : "center",
+                  lineHeight: 28,
+                  paddingHorizontal: 16,
+                }}
               >
-                {t('coupon.enterCouponCode')}
+                {t("coupon.enterCouponCode")}
               </Text>
             </View>
 
-            {/* Main Coupon Card with Super Curved Design */}
-            <CurvedCard 
+            {/* Main Coupon Card */}
+            <CurvedCard
               containerStyle={{
                 borderRadius: 36,
                 padding: 40,
                 marginHorizontal: 8,
-                shadowColor: '#000',
+                shadowColor: "#000",
                 shadowOffset: { width: 0, height: 24 },
                 shadowOpacity: 0.15,
                 shadowRadius: 48,
@@ -130,16 +157,23 @@ const RedeemCouponScreen = ({ navigation }) => {
               }}
             >
               {/* Input Section */}
-              <View className="mb-10">
-                <Text 
-                  className="font-tajawal-bold text-lg text-gray-700 mb-6 uppercase tracking-wider"
-                  style={{ textAlign: isRTL ? 'right' : 'left' }}
+              <View style={{ marginBottom: 40 }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: "#374151",
+                    marginBottom: 24,
+                    textTransform: "uppercase",
+                    letterSpacing: 2,
+                    textAlign: isRTL ? "right" : "left",
+                  }}
                 >
-                  {t('coupon.couponCode')}
+                  {t("coupon.couponCode")}
                 </Text>
-                
+
                 <CurvedInput
-                  placeholder={t('coupon.enterCodeHere')}
+                  placeholder={t("coupon.enterCodeHere")}
                   value={couponCode}
                   onChangeText={(text) => setCouponCode(text.toUpperCase())}
                   autoCapitalize="characters"
@@ -148,33 +182,40 @@ const RedeemCouponScreen = ({ navigation }) => {
                   containerStyle={{
                     borderRadius: 28,
                     borderWidth: 3,
-                    backgroundColor: '#FAFAFA',
-                    borderColor: couponCode ? '#A855F7' : '#E5E7EB',
+                    backgroundColor: "#FAFAFA",
+                    borderColor: couponCode ? "#A855F7" : "#E5E7EB",
                     paddingHorizontal: 24,
                     paddingVertical: 20,
                   }}
                   inputStyle={{
                     fontSize: 20,
-                    fontFamily: 'monospace',
+                    fontFamily: "monospace",
                     letterSpacing: 4,
-                    textAlign: 'center',
-                    textAlignVertical: 'center',
+                    textAlign: "center",
                   }}
                 />
-                
+
                 {couponCode && (
-                  <Text 
-                    className="font-tajawal text-sm text-gray-500 mt-3 text-center"
-                    style={{ textAlign: isRTL ? 'right' : 'center' }}
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#6B7280",
+                      marginTop: 12,
+                      textAlign: isRTL ? "right" : "center",
+                    }}
                   >
-                    {couponCode.length}/25 {t('coupon.characterCount')}
+                    {couponCode.length}/25 {t("coupon.characterCount")}
                   </Text>
                 )}
               </View>
 
-              {/* Redeem Button with Gradient Effect */}
+              {/* Redeem Button */}
               <CurvedButton
-                title={isLoading ? t('coupon.redeeming') : `🎁 ${t('coupon.redeemCouponButton')}`}
+                title={
+                  isLoading
+                    ? t("coupon.redeeming")
+                    : t("coupon.redeemCouponButton")
+                }
                 onPress={handleRedeemCoupon}
                 disabled={isLoading || !couponCode.trim()}
                 loading={isLoading}
@@ -183,7 +224,7 @@ const RedeemCouponScreen = ({ navigation }) => {
                 fullWidth
                 style={{
                   borderRadius: 32,
-                  shadowColor: '#A855F7',
+                  shadowColor: "#A855F7",
                   shadowOffset: { width: 0, height: 12 },
                   shadowOpacity: 0.4,
                   shadowRadius: 20,
@@ -191,83 +232,141 @@ const RedeemCouponScreen = ({ navigation }) => {
                 }}
               />
 
-              {/* Help Section with Curved Design */}
-              <View 
-                className="mt-10 p-6 rounded-3xl"
-                style={{ backgroundColor: '#F0F9FF' }}
+              {/* Help Section */}
+              <View
+                style={{
+                  marginTop: 40,
+                  padding: 24,
+                  borderRadius: 24,
+                  backgroundColor: "#F0F9FF",
+                }}
               >
-                <View 
-                  className="flex-row items-center mb-4"
-                  style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                <View
+                  style={{
+                    flexDirection: isRTL ? "row-reverse" : "row",
+                    alignItems: "center",
+                    marginBottom: 16,
+                  }}
                 >
-                  <View 
-                    className="w-10 h-10 rounded-2xl items-center justify-center mr-3"
-                    style={{ backgroundColor: '#0EA5E9' }}
+                  <View
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 16,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginRight: 12,
+                      backgroundColor: "#0EA5E9",
+                    }}
                   >
                     <Ionicons name="bulb" size={20} color="white" />
                   </View>
-                  <Text 
-                    className="font-tajawal-bold text-blue-800 text-lg"
-                    style={{ textAlign: isRTL ? 'right' : 'left' }}
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: "#1e40af",
+                      textAlign: isRTL ? "right" : "left",
+                    }}
                   >
-                    {t('coupon.quickTips')}
+                    {t("coupon.quickTips")}
                   </Text>
                 </View>
-                <View className="space-y-2">
-                  <Text 
-                    className="font-tajawal text-blue-700 text-base leading-6"
-                    style={{ textAlign: isRTL ? 'right' : 'left' }}
+                <View style={{ gap: 8 }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#1d4ed8",
+                      lineHeight: 24,
+                      textAlign: isRTL ? "right" : "left",
+                    }}
                   >
-                    {t('coupon.couponCaseInsensitive')}
+                    • {t("coupon.couponCaseInsensitive")}
                   </Text>
-                  <Text 
-                    className="font-tajawal text-blue-700 text-base leading-6"
-                    style={{ textAlign: isRTL ? 'right' : 'left' }}
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#1d4ed8",
+                      lineHeight: 24,
+                      textAlign: isRTL ? "right" : "left",
+                    }}
                   >
-                    {t('coupon.canContainLetters')}
+                    • {t("coupon.canContainLetters")}
                   </Text>
-                  <Text 
-                    className="font-tajawal text-blue-700 text-base leading-6"
-                    style={{ textAlign: isRTL ? 'right' : 'left' }}
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#1d4ed8",
+                      lineHeight: 24,
+                      textAlign: isRTL ? "right" : "left",
+                    }}
                   >
-                    {t('coupon.stableInternetConnection')}
+                    • {t("coupon.stableInternetConnection")}
                   </Text>
                 </View>
               </View>
             </CurvedCard>
 
-            {/* Footer with Curved Design */}
-            <View className="items-center mt-12">
-              <TouchableOpacity 
+            {/* Footer */}
+            <View style={{ alignItems: "center", marginTop: 48 }}>
+              <TouchableOpacity
                 onPress={() => navigation.goBack()}
-                className="flex-row items-center"
-                style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                style={{
+                  flexDirection: isRTL ? "row-reverse" : "row",
+                  alignItems: "center",
+                }}
               >
-                <Ionicons 
-                  name={isRTL ? "arrow-forward" : "arrow-back"} 
-                  size={20} 
-                  color="#6B7280" 
+                <Ionicons
+                  name={isRTL ? "arrow-forward" : "arrow-back"}
+                  size={20}
+                  color="#6B7280"
                 />
-                <Text 
-                  className="font-tajawal text-gray-600 ml-3 text-lg"
-                  style={{ textAlign: isRTL ? 'right' : 'left' }}
+                <Text
+                  style={{
+                    color: "#6B7280",
+                    marginLeft: 12,
+                    fontSize: 18,
+                    textAlign: isRTL ? "right" : "left",
+                  }}
                 >
-                  {t('coupon.backToHome')}
+                  {t("coupon.backToHome")}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* Decorative Elements */}
-            <View className="absolute top-32 right-12 opacity-20">
-              <View 
-                className="w-20 h-20 rounded-full"
-                style={{ backgroundColor: '#22C55E' }}
+            <View
+              style={{
+                position: "absolute",
+                top: 128,
+                right: 48,
+                opacity: 0.2,
+              }}
+            >
+              <View
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 40,
+                  backgroundColor: "#22C55E",
+                }}
               />
             </View>
-            <View className="absolute bottom-40 left-12 opacity-20">
-              <View 
-                className="w-16 h-16 rounded-full"
-                style={{ backgroundColor: '#F59E0B' }}
+            <View
+              style={{
+                position: "absolute",
+                bottom: 160,
+                left: 48,
+                opacity: 0.2,
+              }}
+            >
+              <View
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 32,
+                  backgroundColor: "#F59E0B",
+                }}
               />
             </View>
           </View>
@@ -276,3 +375,5 @@ const RedeemCouponScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+export default RedeemCouponScreen;

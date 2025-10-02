@@ -19,7 +19,7 @@ export class QuizSubmission {
   studentId: mongoose.Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true })
-  quizId: mongoose.Types.ObjectId;
+  quiz: mongoose.Types.ObjectId;
 
   submittedAt: Date;
   createdAt: Date;
@@ -30,4 +30,4 @@ export const QuizSubmissionSchema = SchemaFactory.createForClass(QuizSubmission)
 
 // Create indexes
 QuizSubmissionSchema.index({ studentId: 1 });
-QuizSubmissionSchema.index({ quizId: 1 });
+QuizSubmissionSchema.index({ quiz: 1 });

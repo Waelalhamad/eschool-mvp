@@ -204,3 +204,5 @@ const UploadContentScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
+
+export default UploadContentScreen;

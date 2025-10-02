@@ -56,7 +56,7 @@ const CurvedInput = ({
   const renderLeftIcon = () => {
     if (leftIcon) {
       return (
-        <View className="mr-3">
+        <View style={{ marginRight: 12 }}>
           <Ionicons 
             name={leftIcon} 
             size={20} 
@@ -71,7 +71,7 @@ const CurvedInput = ({
   const renderRightIcon = () => {
     if (secureTextEntry) {
       return (
-        <TouchableOpacity onPress={togglePasswordVisibility} className="ml-3">
+        <TouchableOpacity onPress={togglePasswordVisibility} style={{ marginLeft: 12 }}>
           <Ionicons 
             name={showPassword ? 'eye-outline' : 'eye-off-outline'} 
             size={20} 
@@ -83,7 +83,7 @@ const CurvedInput = ({
     
     if (rightIcon) {
       return (
-        <TouchableOpacity onPress={onRightIconPress} className="ml-3">
+        <TouchableOpacity onPress={onRightIconPress} style={{ marginLeft: 12 }}>
           <Ionicons 
             name={rightIcon} 
             size={20} 
@@ -116,7 +116,6 @@ const CurvedInput = ({
     {
       flex: 1,
       fontSize: 16,
-      fontFamily: 'Tajawal',
       color: '#1F2937',
       textAlign: isRTL ? 'right' : 'left',
       paddingVertical: 0,
@@ -128,8 +127,13 @@ const CurvedInput = ({
     <View style={[{ marginBottom: 16 }, style]}>
       {label && (
         <Text 
-          className="font-tajawal-bold text-sm text-gray-700 mb-2"
-          style={{ textAlign: isRTL ? 'right' : 'left' }}
+          style={{
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: '#374151',
+            marginBottom: 8,
+            textAlign: isRTL ? 'right' : 'left'
+          }}
         >
           {label}
         </Text>
@@ -160,8 +164,12 @@ const CurvedInput = ({
       
       {error && (
         <Text 
-          className="font-tajawal text-sm text-red-500 mt-1"
-          style={{ textAlign: isRTL ? 'right' : 'left' }}
+          style={{
+            fontSize: 14,
+            color: '#EF4444',
+            marginTop: 4,
+            textAlign: isRTL ? 'right' : 'left'
+          }}
         >
           {error}
         </Text>
@@ -169,8 +177,12 @@ const CurvedInput = ({
       
       {success && (
         <Text 
-          className="font-tajawal text-sm text-green-500 mt-1"
-          style={{ textAlign: isRTL ? 'right' : 'left' }}
+          style={{
+            fontSize: 14,
+            color: '#22C55E',
+            marginTop: 4,
+            textAlign: isRTL ? 'right' : 'left'
+          }}
         >
           {success}
         </Text>

@@ -227,3 +227,167 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 **Built with ❤️ for modern e-learning**
+
+## Project Structure
+
+```
+eschool-mvp # 
+├── backend # 
+│   ├── src # 
+│   │   ├── auth # 
+│   │   │   ├── decorators # 
+│   │   │   │   └── roles.decorator.ts # 
+│   │   │   ├── dto # 
+│   │   │   │   └── auth.dto.ts # 
+│   │   │   ├── guards # 
+│   │   │   │   ├── jwt-auth.guard.ts # 
+│   │   │   │   └── roles.guard.ts # 
+│   │   │   ├── auth.controller.ts # 
+│   │   │   ├── auth.module.ts # 
+│   │   │   ├── auth.service.ts # 
+│   │   │   ├── jwt-auth.guard.ts # 
+│   │   │   └── jwt.strategy.ts # 
+│   │   ├── common # 
+│   │   │   ├── dto # 
+│   │   │   │   └── pagination.dto.ts # 
+│   │   │   ├── filters # 
+│   │   │   │   └── http-exception.filter.ts # 
+│   │   │   └── interceptors # 
+│   │   │       └── logging.interceptor.ts # 
+│   │   ├── config # 
+│   │   │   └── database.ts # 
+│   │   ├── coupons # 
+│   │   │   ├── dto # 
+│   │   │   │   └── coupon.dto.ts # 
+│   │   │   ├── coupons.controller.ts # 
+│   │   │   ├── coupons.module.ts # 
+│   │   │   └── coupons.service.ts # 
+│   │   ├── courses # 
+│   │   │   ├── courses.controller.ts # 
+│   │   │   ├── courses.module.ts # 
+│   │   │   └── courses.service.ts # 
+│   │   ├── entities # 
+│   │   │   ├── coupon.entity.ts # 
+│   │   │   ├── course.entity.ts # 
+│   │   │   ├── lesson.entity.ts # 
+│   │   │   ├── quiz-submission.entity.ts # 
+│   │   │   ├── quiz.entity.ts # 
+│   │   │   ├── upload-request.entity.ts # 
+│   │   │   └── user.entity.ts # 
+│   │   ├── health # 
+│   │   │   ├── health.controller.ts # 
+│   │   │   └── health.module.ts # 
+│   │   ├── lessons # 
+│   │   │   ├── dto # 
+│   │   │   │   ├── create-lesson.dto.ts # 
+│   │   │   │   └── update-lesson.dto.ts # 
+│   │   │   ├── lessons.controller.ts # 
+│   │   │   ├── lessons.module.ts # 
+│   │   │   └── lessons.service.ts # 
+│   │   ├── migrations # 
+│   │   │   ├── 001-initial-schema.ts # 
+│   │   │   └── 002-add-indexes.ts # 
+│   │   ├── quizzes # 
+│   │   │   ├── dto # 
+│   │   │   │   └── quiz.dto.ts # 
+│   │   │   ├── quizzes.controller.ts # 
+│   │   │   ├── quizzes.module.ts # 
+│   │   │   └── quizzes.service.ts # 
+│   │   ├── schemas # 
+│   │   │   ├── coupon.schema.ts # 
+│   │   │   ├── course.schema.ts # 
+│   │   │   ├── lesson.schema.ts # 
+│   │   │   ├── quiz-submission.schema.ts # 
+│   │   │   ├── quiz.schema.ts # 
+│   │   │   ├── upload-request.schema.ts # 
+│   │   │   └── user.schema.ts # 
+│   │   ├── uploads # 
+│   │   │   ├── dto # 
+│   │   │   │   └── upload.dto.ts # 
+│   │   │   ├── uploads.controller.ts # 
+│   │   │   ├── uploads.module.ts # 
+│   │   │   └── uploads.service.ts # 
+│   │   ├── users # 
+│   │   │   ├── dto # 
+│   │   │   │   └── update-profile.dto.ts # 
+│   │   │   ├── users.controller.ts # 
+│   │   │   ├── users.module.ts # 
+│   │   │   └── users.service.ts # 
+│   │   ├── app.controller.ts # 
+│   │   ├── app.module.ts # 
+│   │   ├── app.service.ts # 
+│   │   └── main.ts # 
+│   ├── test # 
+│   │   ├── app.e2e-spec.ts # 
+│   │   └── jest-e2e.json # 
+│   ├── .env.example # 
+│   ├── .eslintrc.js # 
+│   ├── .gitignore # 
+│   ├── .prettierrc # 
+│   ├── jest.config.js # 
+│   ├── nest-cli.json # 
+│   ├── package-lock.json # 
+│   ├── package.json # 
+│   ├── tsconfig.build.json # 
+│   └── tsconfig.json # 
+├── mobile # 
+│   ├── .expo # 
+│   │   ├── devices.json # 
+│   │   └── README.md # 
+│   ├── assets # 
+│   ├── src # 
+│   │   ├── components # 
+│   │   │   ├── CurvedButton.js # 
+│   │   │   ├── CurvedCard.js # 
+│   │   │   └── CurvedInput.js # 
+│   │   ├── context # 
+│   │   │   ├── AuthContext.js # 
+│   │   │   └── LocalizationContext.js # 
+│   │   ├── locales # 
+│   │   │   ├── ar.js # 
+│   │   │   └── en.js # 
+│   │   ├── navigation # 
+│   │   │   └── AppNavigator.js # 
+│   │   ├── screens # 
+│   │   │   ├── admin # 
+│   │   │   │   ├── AdminHomeScreen.js # 
+│   │   │   │   ├── ManageCouponsScreen.js # 
+│   │   │   │   ├── ReviewUploadsScreen.js # 
+│   │   │   │   └── UsersManagementScreen.js # 
+│   │   │   ├── auth # 
+│   │   │   │   ├── LoginScreen.js # 
+│   │   │   │   └── RegisterScreen.js # 
+│   │   │   ├── student # 
+│   │   │   │   ├── CoursesScreen.js # 
+│   │   │   │   ├── HomeScreen.js # 
+│   │   │   │   ├── LessonDetailScreen.js # 
+│   │   │   │   ├── LessonsScreen.js # 
+│   │   │   │   ├── ProfileScreen.js # 
+│   │   │   │   └── RedeemCouponScreen.js # 
+│   │   │   └── teacher # 
+│   │   │       ├── MyUploadsScreen.js # 
+│   │   │       ├── TeacherHomeScreen.js # 
+│   │   │       └── UploadContentScreen.js # 
+│   │   ├── services # 
+│   │   │   └── api.js # 
+│   │   └── store # 
+│   │       ├── slices # 
+│   │       │   ├── authSlice.js # 
+│   │       │   ├── couponsSlice.js # 
+│   │       │   ├── coursesSlice.js # 
+│   │       │   └── lessonsSlice.js # 
+│   │       └── store.js # 
+│   ├── .env.example # 
+│   ├── app.config.js # 
+│   ├── App.js # 
+│   ├── app.json # 
+│   ├── babel.config.js # 
+│   ├── eas.json # 
+│   ├── metro.config.js # 
+│   ├── package-lock.json # 
+│   ├── package.json # 
+│   ├── tailwind.config.js # 
+│   └── test-sdk54.js # 
+├── .gitignore # 
+└── README.md # 
+```

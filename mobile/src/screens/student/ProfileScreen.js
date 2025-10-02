@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import { logout, updateProfile } from '../../store/slices/authSlice';
+import { logout } from '../../store/slices/authSlice';
 
 const ProfileScreen = ({ navigation }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +38,8 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleSave = async () => {
     try {
-      await dispatch(updateProfile(editData)).unwrap();
+      // Mock save - replace with actual API call
+      // await dispatch(updateProfile(editData)).unwrap();
       setIsEditing(false);
       Alert.alert('Success', 'Profile updated successfully!');
     } catch (error) {
@@ -91,45 +92,65 @@ const ProfileScreen = ({ navigation }) => {
 
   if (!user) {
     return (
-      <View className="flex-1 bg-gray-50 items-center justify-center">
-        <Text className="text-gray-500 text-lg">Loading...</Text>
+      <View style={{ flex: 1, backgroundColor: '#F9FAFB', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ color: '#9CA3AF', fontSize: 18 }}>Loading...</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <ScrollView className="flex-1">
+    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+      <ScrollView style={{ flex: 1 }}>
         {/* Header */}
-        <View className="bg-gradient-to-br from-blue-600 to-indigo-700 px-6 pt-12 pb-8">
-          <View className="items-center">
+        <View style={{
+          backgroundColor: '#3B82F6',
+          paddingHorizontal: 24,
+          paddingTop: 48,
+          paddingBottom: 32,
+          background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)'
+        }}>
+          <View style={{ alignItems: 'center' }}>
             {/* Avatar */}
             <View 
-              className="w-24 h-24 rounded-full items-center justify-center mb-4 shadow-lg"
-              style={{ backgroundColor: '#F3F4F6' }}
+              style={{
+                width: 96,
+                height: 96,
+                borderRadius: 48,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 16,
+                backgroundColor: '#F3F4F6',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 8
+              }}
             >
-              {user.avatar ? (
-                <Ionicons name="person" size={48} color="#6B7280" />
-              ) : (
-                <Ionicons name="person" size={48} color="#6B7280" />
-              )}
+              <Ionicons name="person" size={48} color="#6B7280" />
             </View>
 
             {/* User Info */}
-            <Text className="text-2xl font-bold text-white mb-1">
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white', marginBottom: 4 }}>
               {user.name}
             </Text>
-            <Text className="text-blue-100 mb-3">
+            <Text style={{ color: '#BFDBFE', marginBottom: 12 }}>
               {user.email}
             </Text>
 
             {/* Role Badge */}
             <View 
-              className="flex-row items-center px-4 py-2 rounded-full"
-              style={{ backgroundColor: getRoleColor(user.role) }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                borderRadius: 20,
+                backgroundColor: getRoleColor(user.role)
+              }}
             >
               <Ionicons name={getRoleIcon(user.role)} size={16} color="white" />
-              <Text className="text-white font-semibold ml-2 capitalize">
+              <Text style={{ color: 'white', fontWeight: '600', marginLeft: 8, textTransform: 'capitalize' }}>
                 {user.role}
               </Text>
             </View>
@@ -137,10 +158,12 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         {/* Profile Details */}
-        <View className="px-6 -mt-4">
+        <View style={{ paddingHorizontal: 24, marginTop: -16 }}>
           <View 
-            className="bg-white rounded-2xl p-6 shadow-lg"
             style={{
+              backgroundColor: 'white',
+              borderRadius: 16,
+              padding: 24,
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.1,
@@ -151,86 +174,102 @@ const ProfileScreen = ({ navigation }) => {
             {/* Edit Button */}
             {!isEditing && (
               <TouchableOpacity
-                className="absolute top-4 right-4 z-10"
+                style={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}
                 onPress={handleEdit}
               >
-                <View className="bg-blue-50 p-2 rounded-full">
+                <View style={{ backgroundColor: '#EFF6FF', padding: 8, borderRadius: 20 }}>
                   <Ionicons name="pencil" size={20} color="#3B82F6" />
                 </View>
               </TouchableOpacity>
             )}
 
-            <Text className="text-xl font-bold text-gray-800 mb-6">
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F2937', marginBottom: 24 }}>
               Profile Information
             </Text>
 
             {/* Name Field */}
-            <View className="mb-6">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
+            <View style={{ marginBottom: 24 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
                 Full Name
               </Text>
               {isEditing ? (
                 <TextInput
-                  className="border-2 border-gray-200 px-4 py-3 rounded-xl text-lg bg-gray-50"
+                  style={{
+                    borderWidth: 2,
+                    borderColor: '#E5E7EB',
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderRadius: 12,
+                    fontSize: 16,
+                    backgroundColor: '#F9FAFB'
+                  }}
                   value={editData.name}
                   onChangeText={(text) => setEditData(prev => ({ ...prev, name: text }))}
                   placeholder="Enter your name"
                 />
               ) : (
-                <Text className="text-lg text-gray-800 py-3">
+                <Text style={{ fontSize: 16, color: '#1F2937', paddingVertical: 12 }}>
                   {user.name}
                 </Text>
               )}
             </View>
 
             {/* Email Field (Read-only) */}
-            <View className="mb-6">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
+            <View style={{ marginBottom: 24 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
                 Email Address
               </Text>
-              <Text className="text-lg text-gray-600 py-3">
+              <Text style={{ fontSize: 16, color: '#6B7280', paddingVertical: 12 }}>
                 {user.email}
               </Text>
-              <Text className="text-xs text-gray-500">
+              <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
                 Email cannot be changed
               </Text>
             </View>
 
             {/* Phone Field */}
-            <View className="mb-6">
-              <Text className="text-sm font-semibold text-gray-700 mb-2">
+            <View style={{ marginBottom: 24 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
                 Phone Number
               </Text>
               {isEditing ? (
                 <TextInput
-                  className="border-2 border-gray-200 px-4 py-3 rounded-xl text-lg bg-gray-50"
+                  style={{
+                    borderWidth: 2,
+                    borderColor: '#E5E7EB',
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderRadius: 12,
+                    fontSize: 16,
+                    backgroundColor: '#F9FAFB'
+                  }}
                   value={editData.phone}
                   onChangeText={(text) => setEditData(prev => ({ ...prev, phone: text }))}
                   placeholder="Enter your phone number"
                   keyboardType="phone-pad"
                 />
               ) : (
-                <Text className="text-lg text-gray-800 py-3">
+                <Text style={{ fontSize: 16, color: '#1F2937', paddingVertical: 12 }}>
                   {user.phone || 'Not provided'}
                 </Text>
               )}
             </View>
 
             {/* Account Info */}
-            <View className="border-t border-gray-200 pt-6">
-              <Text className="text-sm font-semibold text-gray-700 mb-3">
+            <View style={{ borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 24 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 12 }}>
                 Account Information
               </Text>
-              <View className="space-y-3">
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-600">Member since</Text>
-                  <Text className="text-gray-800 font-medium">
+              <View style={{ gap: 12 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: '#6B7280' }}>Member since</Text>
+                  <Text style={{ color: '#1F2937', fontWeight: '500' }}>
                     {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                   </Text>
                 </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-600">Account Type</Text>
-                  <Text className="text-gray-800 font-medium capitalize">
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: '#6B7280' }}>Account Type</Text>
+                  <Text style={{ color: '#1F2937', fontWeight: '500', textTransform: 'capitalize' }}>
                     {user.role}
                   </Text>
                 </View>
@@ -239,21 +278,21 @@ const ProfileScreen = ({ navigation }) => {
 
             {/* Edit Actions */}
             {isEditing && (
-              <View className="flex-row space-x-3 mt-6">
+              <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
                 <TouchableOpacity
-                  className="flex-1 py-3 bg-gray-200 rounded-xl"
+                  style={{ flex: 1, paddingVertical: 12, backgroundColor: '#E5E7EB', borderRadius: 12 }}
                   onPress={handleCancel}
                 >
-                  <Text className="text-gray-700 font-semibold text-center">
+                  <Text style={{ color: '#374151', fontWeight: '600', textAlign: 'center' }}>
                     Cancel
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  className="flex-1 py-3 bg-blue-600 rounded-xl"
+                  style={{ flex: 1, paddingVertical: 12, backgroundColor: '#3B82F6', borderRadius: 12 }}
                   onPress={handleSave}
                   disabled={isLoading}
                 >
-                  <Text className="text-white font-semibold text-center">
+                  <Text style={{ color: 'white', fontWeight: '600', textAlign: 'center' }}>
                     {isLoading ? 'Saving...' : 'Save Changes'}
                   </Text>
                 </TouchableOpacity>
@@ -263,18 +302,37 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         {/* Action Buttons */}
-        <View className="px-6 mt-6 pb-8">
-          <View className="space-y-4">
+        <View style={{ paddingHorizontal: 24, marginTop: 24, paddingBottom: 32 }}>
+          <View style={{ gap: 16 }}>
             {/* Settings Button */}
-            <TouchableOpacity className="bg-white rounded-2xl p-4 flex-row items-center shadow-sm">
-              <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-4">
+            <TouchableOpacity style={{
+              backgroundColor: 'white',
+              borderRadius: 16,
+              padding: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4
+            }}>
+              <View style={{
+                width: 40,
+                height: 40,
+                backgroundColor: '#F3F4F6',
+                borderRadius: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 16
+              }}>
                 <Ionicons name="settings-outline" size={20} color="#6B7280" />
               </View>
-              <View className="flex-1">
-                <Text className="text-lg font-semibold text-gray-800">
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: '#1F2937' }}>
                   Settings
                 </Text>
-                <Text className="text-gray-500">
+                <Text style={{ color: '#9CA3AF' }}>
                   App preferences and notifications
                 </Text>
               </View>
@@ -282,15 +340,34 @@ const ProfileScreen = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* Help Button */}
-            <TouchableOpacity className="bg-white rounded-2xl p-4 flex-row items-center shadow-sm">
-              <View className="w-10 h-10 bg-green-100 rounded-full items-center justify-center mr-4">
+            <TouchableOpacity style={{
+              backgroundColor: 'white',
+              borderRadius: 16,
+              padding: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4
+            }}>
+              <View style={{
+                width: 40,
+                height: 40,
+                backgroundColor: '#DCFCE7',
+                borderRadius: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 16
+              }}>
                 <Ionicons name="help-circle-outline" size={20} color="#059669" />
               </View>
-              <View className="flex-1">
-                <Text className="text-lg font-semibold text-gray-800">
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: '#1F2937' }}>
                   Help & Support
                 </Text>
-                <Text className="text-gray-500">
+                <Text style={{ color: '#9CA3AF' }}>
                   Get help and contact support
                 </Text>
               </View>
@@ -299,17 +376,38 @@ const ProfileScreen = ({ navigation }) => {
 
             {/* Logout Button */}
             <TouchableOpacity 
-              className="bg-white rounded-2xl p-4 flex-row items-center shadow-sm border border-red-100"
+              style={{
+                backgroundColor: 'white',
+                borderRadius: 16,
+                padding: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 4,
+                borderWidth: 1,
+                borderColor: '#FECACA'
+              }}
               onPress={() => setShowLogoutModal(true)}
             >
-              <View className="w-10 h-10 bg-red-100 rounded-full items-center justify-center mr-4">
+              <View style={{
+                width: 40,
+                height: 40,
+                backgroundColor: '#FECACA',
+                borderRadius: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 16
+              }}>
                 <Ionicons name="log-out-outline" size={20} color="#DC2626" />
               </View>
-              <View className="flex-1">
-                <Text className="text-lg font-semibold text-red-600">
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: '#DC2626' }}>
                   Sign Out
                 </Text>
-                <Text className="text-red-400">
+                <Text style={{ color: '#F87171' }}>
                   Sign out of your account
                 </Text>
               </View>
@@ -326,29 +424,41 @@ const ProfileScreen = ({ navigation }) => {
         animationType="fade"
         onRequestClose={() => setShowLogoutModal(false)}
       >
-        <View className="flex-1 bg-black/50 items-center justify-center px-6">
-          <View className="bg-white rounded-2xl p-6 w-full max-w-sm">
-            <Text className="text-xl font-bold text-gray-800 mb-2">
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 24
+        }}>
+          <View style={{
+            backgroundColor: 'white',
+            borderRadius: 16,
+            padding: 24,
+            width: '100%',
+            maxWidth: 400
+          }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F2937', marginBottom: 8 }}>
               Sign Out
             </Text>
-            <Text className="text-gray-600 mb-6">
+            <Text style={{ color: '#6B7280', marginBottom: 24 }}>
               Are you sure you want to sign out of your account?
             </Text>
-            <View className="flex-row space-x-3">
+            <View style={{ flexDirection: 'row', gap: 12 }}>
               <TouchableOpacity
-                className="flex-1 py-3 bg-gray-200 rounded-xl"
+                style={{ flex: 1, paddingVertical: 12, backgroundColor: '#E5E7EB', borderRadius: 12 }}
                 onPress={() => setShowLogoutModal(false)}
               >
-                <Text className="text-gray-700 font-semibold text-center">
+                <Text style={{ color: '#374151', fontWeight: '600', textAlign: 'center' }}>
                   Cancel
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-1 py-3 bg-red-600 rounded-xl"
+                style={{ flex: 1, paddingVertical: 12, backgroundColor: '#DC2626', borderRadius: 12 }}
                 onPress={handleLogout}
                 disabled={isLoading}
               >
-                <Text className="text-white font-semibold text-center">
+                <Text style={{ color: 'white', fontWeight: '600', textAlign: 'center' }}>
                   {isLoading ? 'Signing out...' : 'Sign Out'}
                 </Text>
               </TouchableOpacity>

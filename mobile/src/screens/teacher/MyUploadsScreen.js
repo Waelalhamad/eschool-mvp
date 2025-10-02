@@ -159,3 +159,5 @@ const MyUploadsScreen = () => {
     </ScrollView>
   );
 };
+
+export default MyUploadsScreen;

@@ -6,9 +6,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
   StatusBar,
+  TouchableOpacity, // Added missing import
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { register, clearError } from '../../store/slices/authSlice';
@@ -25,8 +26,6 @@ const RegisterScreen = ({ navigation }) => {
     confirmPassword: '',
     role: 'student',
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((state) => state.auth);
@@ -92,28 +91,29 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F9FF" />
       <KeyboardAvoidingView
-        className="flex-1"
+        style={{ flex: 1, backgroundColor: '#F0F9FF' }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ 
-          backgroundColor: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
-          backgroundImage: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)'
-        }}
       >
         <ScrollView 
-          className="flex-1"
+          style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 justify-center px-6 py-8">
-            {/* Header Section with Curved Design */}
-            <View className="items-center mb-8">
-              {/* Modern Curved Logo Container */}
+          <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 }}>
+            {/* Header Section */}
+            <View style={{ alignItems: 'center', marginBottom: 32 }}>
+              {/* Logo Container */}
               <View 
-                className="w-28 h-28 rounded-4xl items-center justify-center mb-6 shadow-2xl"
                 style={{
+                  width: 112,
+                  height: 112,
+                  borderRadius: 28,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 24,
                   backgroundColor: '#A855F7',
                   shadowColor: '#A855F7',
                   shadowOffset: { width: 0, height: 12 },
@@ -127,20 +127,30 @@ const RegisterScreen = ({ navigation }) => {
               </View>
               
               <Text 
-                className="font-tajawal-bold text-5xl text-gray-800 mb-3 text-center"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+                style={{
+                  fontSize: 40,
+                  fontWeight: 'bold',
+                  color: '#1F2937',
+                  marginBottom: 12,
+                  textAlign: isRTL ? 'right' : 'center'
+                }}
               >
                 {t('auth.joinESchool')}
               </Text>
               <Text 
-                className="font-tajawal text-xl text-gray-600 leading-7 text-center px-4"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+                style={{
+                  fontSize: 20,
+                  color: '#6B7280',
+                  lineHeight: 28,
+                  textAlign: isRTL ? 'right' : 'center',
+                  paddingHorizontal: 16
+                }}
               >
                 {t('auth.createAccountContinue')}
               </Text>
             </View>
 
-            {/* Main Register Card with Super Curved Design */}
+            {/* Main Register Card */}
             <CurvedCard 
               containerStyle={{
                 borderRadius: 32,
@@ -154,7 +164,7 @@ const RegisterScreen = ({ navigation }) => {
               }}
             >
               {/* Form Fields */}
-              <View className="space-y-6">
+              <View style={{ marginBottom: 24 }}>
                 {/* Name Field */}
                 <CurvedInput
                   label={t('auth.fullName')}
@@ -191,7 +201,7 @@ const RegisterScreen = ({ navigation }) => {
                   placeholder={t('auth.password')}
                   value={formData.password}
                   onChangeText={(value) => handleInputChange('password', value)}
-                  secureTextEntry={!showPassword}
+                  secureTextEntry
                   leftIcon="lock-closed-outline"
                   containerStyle={{
                     borderRadius: 24,
@@ -206,7 +216,7 @@ const RegisterScreen = ({ navigation }) => {
                   placeholder={t('auth.confirmYourPassword')}
                   value={formData.confirmPassword}
                   onChangeText={(value) => handleInputChange('confirmPassword', value)}
-                  secureTextEntry={!showConfirmPassword}
+                  secureTextEntry
                   leftIcon="lock-closed-outline"
                   containerStyle={{
                     borderRadius: 24,
@@ -215,17 +225,24 @@ const RegisterScreen = ({ navigation }) => {
                   }}
                 />
 
-                {/* Role Selection with Curved Design */}
+                {/* Role Selection */}
                 <View>
                   <Text 
-                    className="font-tajawal-bold text-sm text-gray-700 mb-4"
-                    style={{ textAlign: isRTL ? 'right' : 'left' }}
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                      color: '#374151',
+                      marginBottom: 16,
+                      textAlign: isRTL ? 'right' : 'left'
+                    }}
                   >
                     {t('auth.accountType')}
                   </Text>
                   <View 
-                    className="flex-row space-x-3"
-                    style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                    style={{ 
+                      flexDirection: isRTL ? 'row-reverse' : 'row',
+                      gap: 12
+                    }}
                   >
                     {[
                       { value: 'student', label: t('auth.student'), icon: 'book-outline' },
@@ -233,13 +250,18 @@ const RegisterScreen = ({ navigation }) => {
                     ].map((role) => (
                       <TouchableOpacity
                         key={role.value}
-                        className={`flex-1 flex-row items-center justify-center py-4 rounded-3xl border-2 ${
-                          formData.role === role.value
-                            ? 'border-purple-500 bg-purple-50'
-                            : 'border-gray-200 bg-gray-50'
-                        }`}
+                        style={{
+                          flex: 1,
+                          flexDirection: isRTL ? 'row-reverse' : 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          paddingVertical: 16,
+                          borderRadius: 24,
+                          borderWidth: 2,
+                          borderColor: formData.role === role.value ? '#A855F7' : '#E5E7EB',
+                          backgroundColor: formData.role === role.value ? '#F3E8FF' : '#F9FAFB',
+                        }}
                         onPress={() => handleInputChange('role', role.value)}
-                        style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
                       >
                         <Ionicons
                           name={role.icon}
@@ -247,9 +269,11 @@ const RegisterScreen = ({ navigation }) => {
                           color={formData.role === role.value ? '#A855F7' : '#6B7280'}
                         />
                         <Text
-                          className={`font-tajawal-bold ml-2 ${
-                            formData.role === role.value ? 'text-purple-700' : 'text-gray-600'
-                          }`}
+                          style={{
+                            fontWeight: 'bold',
+                            marginLeft: 8,
+                            color: formData.role === role.value ? '#7C3AED' : '#6B7280'
+                          }}
                         >
                           {role.label}
                         </Text>
@@ -259,9 +283,9 @@ const RegisterScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              {/* Register Button with Gradient Effect */}
+              {/* Register Button */}
               <CurvedButton
-                title={isLoading ? t('auth.creatingAccount') : `🚀 ${t('auth.createAccount')}`}
+                title={isLoading ? t('auth.creatingAccount') : t('auth.createAccount')}
                 onPress={handleRegister}
                 disabled={isLoading}
                 loading={isLoading}
@@ -281,36 +305,47 @@ const RegisterScreen = ({ navigation }) => {
 
               {/* Terms and Privacy */}
               <Text 
-                className="font-tajawal text-xs text-gray-500 text-center mt-6 leading-5"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+                style={{
+                  fontSize: 12,
+                  color: '#6B7280',
+                  textAlign: isRTL ? 'right' : 'center',
+                  marginTop: 24,
+                  lineHeight: 20
+                }}
               >
                 {t('auth.byCreatingAccount')}{' '}
-                <Text className="font-tajawal-bold text-purple-600">{t('auth.termsOfService')}</Text>
+                <Text style={{ fontWeight: 'bold', color: '#7C3AED' }}>{t('auth.termsOfService')}</Text>
                 {' '}{t('auth.and')}{' '}
-                <Text className="font-tajawal-bold text-purple-600">{t('auth.privacyPolicy')}</Text>
+                <Text style={{ fontWeight: 'bold', color: '#7C3AED' }}>{t('auth.privacyPolicy')}</Text>
               </Text>
 
-              {/* Footer with Curved Design */}
+              {/* Footer */}
               <View 
-                className="items-center mt-8 pt-6"
-                style={{ 
-                  borderTopWidth: 1, 
+                style={{
+                  alignItems: 'center',
+                  marginTop: 32,
+                  paddingTop: 24,
+                  borderTopWidth: 1,
                   borderTopColor: '#F3F4F6',
-                  borderTopLeftRadius: isRTL ? 0 : 20,
-                  borderTopRightRadius: isRTL ? 20 : 0,
                 }}
               >
                 <TouchableOpacity 
                   onPress={() => navigation.navigate('Login')}
-                  className="flex-row items-center"
-                  style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                  style={{
+                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                    alignItems: 'center'
+                  }}
                 >
-                  <Text className="font-tajawal text-gray-600 text-lg">
+                  <Text style={{ fontSize: 18, color: '#6B7280' }}>
                     {t('auth.alreadyHaveAccount')}{' '}
                   </Text>
                   <Text 
-                    className="font-tajawal-bold text-purple-600 text-lg"
-                    style={{ textDecorationLine: 'underline' }}
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: '#7C3AED',
+                      textDecorationLine: 'underline'
+                    }}
                   >
                     {t('auth.signIn')}
                   </Text>
@@ -319,16 +354,24 @@ const RegisterScreen = ({ navigation }) => {
             </CurvedCard>
 
             {/* Decorative Elements */}
-            <View className="absolute top-20 left-8 opacity-20">
+            <View style={{ position: 'absolute', top: 80, left: 32, opacity: 0.2 }}>
               <View 
-                className="w-16 h-16 rounded-full"
-                style={{ backgroundColor: '#22C55E' }}
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 32,
+                  backgroundColor: '#22C55E'
+                }}
               />
             </View>
-            <View className="absolute bottom-32 right-8 opacity-20">
+            <View style={{ position: 'absolute', bottom: 128, right: 32, opacity: 0.2 }}>
               <View 
-                className="w-12 h-12 rounded-full"
-                style={{ backgroundColor: '#F59E0B' }}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 24,
+                  backgroundColor: '#F59E0B'
+                }}
               />
             </View>
           </View>

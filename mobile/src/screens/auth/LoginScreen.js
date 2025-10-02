@@ -6,9 +6,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
   StatusBar,
+  TouchableOpacity, // Added this import
+  
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearError } from '../../store/slices/authSlice';
 import { useLocalization } from '../../context/LocalizationContext';
@@ -42,28 +44,29 @@ const LoginScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F9FF" />
       <KeyboardAvoidingView
-        className="flex-1"
+        style={{ flex: 1, backgroundColor: '#F0F9FF' }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ 
-          backgroundColor: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
-          backgroundImage: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)'
-        }}
       >
         <ScrollView 
-          className="flex-1"
+          style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 justify-center px-6 py-8">
-            {/* Header Section with Curved Design */}
-            <View className="items-center mb-12">
-              {/* Modern Curved Logo Container */}
+          <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 }}>
+            {/* Header Section */}
+            <View style={{ alignItems: 'center', marginBottom: 48 }}>
+              {/* Logo Container */}
               <View 
-                className="w-28 h-28 rounded-4xl items-center justify-center mb-6 shadow-2xl"
                 style={{
+                  width: 112,
+                  height: 112,
+                  borderRadius: 28,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 24,
                   backgroundColor: '#0EA5E9',
                   shadowColor: '#0EA5E9',
                   shadowOffset: { width: 0, height: 12 },
@@ -77,20 +80,30 @@ const LoginScreen = ({ navigation }) => {
               </View>
               
               <Text 
-                className="font-tajawal-bold text-5xl text-gray-800 mb-3 text-center"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+                style={{
+                  fontSize: 40,
+                  fontWeight: 'bold',
+                  color: '#1F2937',
+                  marginBottom: 12,
+                  textAlign: isRTL ? 'right' : 'center'
+                }}
               >
                 {t('auth.welcomeBack')}
               </Text>
-              <Text 
-                className="font-tajawal text-xl text-gray-600 leading-7 text-center px-4"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#6B7280',
+                  lineHeight: 28,
+                  textAlign: isRTL ? 'right' : 'center',
+                  paddingHorizontal: 16
+                }}
               >
                 {t('auth.signInToContinue')}
               </Text>
             </View>
 
-            {/* Main Login Card with Super Curved Design */}
+            {/* Main Login Card */}
             <CurvedCard 
               containerStyle={{
                 borderRadius: 32,
@@ -104,7 +117,7 @@ const LoginScreen = ({ navigation }) => {
               }}
             >
               {/* Form Fields */}
-              <View className="space-y-6">
+              <View style={{ marginBottom: 24 }}>
                 {/* Email Field */}
                 <CurvedInput
                   label={t('auth.emailAddress')}
@@ -137,9 +150,9 @@ const LoginScreen = ({ navigation }) => {
                 />
               </View>
 
-              {/* Sign In Button with Gradient Effect */}
+              {/* Sign In Button */}
               <CurvedButton
-                title={isLoading ? t('auth.signingIn') : `🚀 ${t('auth.signIn')}`}
+                title={isLoading ? t('auth.signingIn') : t('auth.signIn')}
                 onPress={handleLogin}
                 disabled={isLoading}
                 loading={isLoading}
@@ -157,11 +170,13 @@ const LoginScreen = ({ navigation }) => {
                 }}
               />
 
-              {/* Footer with Curved Design */}
+              {/* Footer */}
               <View 
-                className="items-center mt-8 pt-6"
-                style={{ 
-                  borderTopWidth: 1, 
+                style={{
+                  alignItems: 'center',
+                  marginTop: 32,
+                  paddingTop: 24,
+                  borderTopWidth: 1,
                   borderTopColor: '#F3F4F6',
                   borderTopLeftRadius: isRTL ? 0 : 20,
                   borderTopRightRadius: isRTL ? 20 : 0,
@@ -169,15 +184,21 @@ const LoginScreen = ({ navigation }) => {
               >
                 <TouchableOpacity 
                   onPress={() => navigation.navigate('Register')}
-                  className="flex-row items-center"
-                  style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                  style={{
+                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                    alignItems: 'center'
+                  }}
                 >
-                  <Text className="font-tajawal text-gray-600 text-lg">
+                  <Text style={{ fontSize: 18, color: '#6B7280' }}>
                     {t('auth.dontHaveAccount')}{' '}
                   </Text>
                   <Text 
-                    className="font-tajawal-bold text-blue-600 text-lg"
-                    style={{ textDecorationLine: 'underline' }}
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: '#2563EB',
+                      textDecorationLine: 'underline'
+                    }}
                   >
                     {t('auth.signUp')}
                   </Text>
@@ -186,16 +207,24 @@ const LoginScreen = ({ navigation }) => {
             </CurvedCard>
 
             {/* Decorative Elements */}
-            <View className="absolute top-20 right-8 opacity-20">
+            <View style={{ position: 'absolute', top: 80, right: 32, opacity: 0.2 }}>
               <View 
-                className="w-16 h-16 rounded-full"
-                style={{ backgroundColor: '#A855F7' }}
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 32,
+                  backgroundColor: '#A855F7'
+                }}
               />
             </View>
-            <View className="absolute bottom-32 left-8 opacity-20">
+            <View style={{ position: 'absolute', bottom: 128, left: 32, opacity: 0.2 }}>
               <View 
-                className="w-12 h-12 rounded-full"
-                style={{ backgroundColor: '#22C55E' }}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 24,
+                  backgroundColor: '#22C55E'
+                }}
               />
             </View>
           </View>
@@ -204,3 +233,5 @@ const LoginScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+export default LoginScreen;

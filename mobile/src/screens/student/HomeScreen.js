@@ -5,15 +5,14 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchCourses } from '../../store/slices/coursesSlice';
 import { useLocalization } from '../../context/LocalizationContext';
 import CurvedCard from '../../components/CurvedCard';
-import CurvedButton from '../../components/CurvedButton';
 
 const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -30,45 +29,59 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F9FF" />
       <ScrollView
-        className="flex-1"
-        style={{ backgroundColor: '#F0F9FF' }}
+        style={{ flex: 1, backgroundColor: '#F0F9FF' }}
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Modern Curved Header */}
-        <View 
-          className="px-6 pt-8 pb-12"
+        {/* Header */}
+        <View
           style={{
+            paddingHorizontal: 24,
+            paddingTop: 32,
+            paddingBottom: 48,
             backgroundColor: '#0EA5E9',
             borderBottomLeftRadius: isRTL ? 0 : 32,
             borderBottomRightRadius: isRTL ? 32 : 0,
           }}
         >
-          <View className="flex-row items-center justify-between mb-6">
-            <View className="flex-1">
-              <Text 
-                className="font-tajawal-bold text-4xl text-white mb-2"
-                style={{ textAlign: isRTL ? 'right' : 'left' }}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  fontSize: 28,
+                  fontWeight: 'bold',
+                  color: '#FFFFFF',
+                  marginBottom: 8,
+                  textAlign: isRTL ? 'right' : 'left'
+                }}
               >
                 {t('home.hello')}, {user?.name}! 👋
               </Text>
-              <Text 
-                className="font-tajawal text-xl text-blue-100 leading-6"
-                style={{ textAlign: isRTL ? 'right' : 'left' }}
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: '#BFDBFE',
+                  lineHeight: 24,
+                  textAlign: isRTL ? 'right' : 'left'
+                }}
               >
                 {t('home.readyToLearn')}
               </Text>
             </View>
             
             {/* Profile Avatar */}
-            <View 
-              className="w-16 h-16 rounded-3xl items-center justify-center shadow-lg"
+            <View
               style={{
+                width: 64,
+                height: 64,
+                borderRadius: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 4 },
@@ -83,13 +96,12 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         {/* Redeem Coupon Card */}
-        <View className="px-6 -mt-6 mb-8">
+        <View style={{ paddingHorizontal: 24, marginTop: -24, marginBottom: 32 }}>
           <CurvedCard
             containerStyle={{
               borderRadius: 28,
               padding: 24,
-              backgroundColor: 'linear-gradient(135deg, #A855F7 0%, #C084FC 100%)',
-              backgroundImage: 'linear-gradient(135deg, #A855F7 0%, #C084FC 100%)',
+              backgroundColor: '#A855F7',
               shadowColor: '#A855F7',
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.4,
@@ -98,28 +110,45 @@ const HomeScreen = ({ navigation }) => {
             }}
             onPress={() => navigation.navigate('RedeemCoupon')}
           >
-            <View 
-              className="flex-row items-center justify-between"
-              style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+            <View
+              style={{
+                flexDirection: isRTL ? 'row-reverse' : 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
             >
-              <View className="flex-1">
-                <Text 
-                  className="font-tajawal-bold text-2xl text-white mb-2"
-                  style={{ textAlign: isRTL ? 'right' : 'left' }}
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: '#FFFFFF',
+                    marginBottom: 8,
+                    textAlign: isRTL ? 'right' : 'left'
+                  }}
                 >
                   🎁 {t('home.redeemCoupon')}
                 </Text>
-                <Text 
-                  className="font-tajawal text-purple-100 leading-5"
-                  style={{ textAlign: isRTL ? 'right' : 'left' }}
+                <Text
+                  style={{
+                    color: '#E9D5FF',
+                    lineHeight: 20,
+                    textAlign: isRTL ? 'right' : 'left'
+                  }}
                 >
-                  احصل على دورات جديدة باستخدام كوبون
+                  {t('home.getNewCoursesWithCoupon')}
                 </Text>
               </View>
               
-              <View 
-                className="w-16 h-16 rounded-3xl items-center justify-center"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+              <View
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 24,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)'
+                }}
               >
                 <Ionicons name="gift" size={28} color="white" />
               </View>
@@ -128,10 +157,15 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         {/* Courses Section */}
-        <View className="px-6">
-          <Text 
-            className="font-tajawal-bold text-3xl text-gray-800 mb-6"
-            style={{ textAlign: isRTL ? 'right' : 'left' }}
+        <View style={{ paddingHorizontal: 24, paddingBottom: 32 }}>
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: 'bold',
+              color: '#1F2937',
+              marginBottom: 24,
+              textAlign: isRTL ? 'right' : 'left'
+            }}
           >
             {t('home.yourCourses')}
           </Text>
@@ -150,28 +184,44 @@ const HomeScreen = ({ navigation }) => {
                 elevation: 8,
               }}
             >
-              <View 
-                className="w-24 h-24 rounded-4xl items-center justify-center mb-6"
-                style={{ backgroundColor: '#F3F4F6' }}
+              <View
+                style={{
+                  width: 96,
+                  height: 96,
+                  borderRadius: 24,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#F3F4F6',
+                  marginBottom: 24
+                }}
               >
                 <Ionicons name="school" size={40} color="#9CA3AF" />
               </View>
-              <Text 
-                className="font-tajawal-bold text-2xl text-gray-700 mb-3"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: '#374151',
+                  marginBottom: 12,
+                  textAlign: 'center'
+                }}
               >
                 {t('home.noCoursesYet')}
               </Text>
-              <Text 
-                className="font-tajawal text-lg text-gray-500 text-center leading-7"
-                style={{ textAlign: isRTL ? 'right' : 'center' }}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: '#6B7280',
+                  textAlign: 'center',
+                  lineHeight: 28
+                }}
               >
                 {t('home.redeemCouponToUnlock')}
               </Text>
             </CurvedCard>
           ) : (
-            <View className="space-y-6">
-              {courses.map((course, index) => (
+            <View style={{ gap: 24 }}>
+              {courses.map((course) => (
                 <CurvedCard
                   key={course.id}
                   containerStyle={{
@@ -186,65 +236,78 @@ const HomeScreen = ({ navigation }) => {
                   }}
                   onPress={() => navigation.navigate('Lessons', { course })}
                 >
-                  <View 
-                    className="flex-row items-start justify-between mb-4"
-                    style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                  <View
+                    style={{
+                      flexDirection: isRTL ? 'row-reverse' : 'row',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      marginBottom: 16
+                    }}
                   >
-                    <View className="flex-1" style={{ paddingHorizontal: isRTL ? 16 : 0, paddingLeft: isRTL ? 16 : 0, paddingRight: isRTL ? 0 : 16 }}>
-                      <Text 
-                        className="font-tajawal-bold text-2xl text-gray-800 mb-3"
-                        style={{ textAlign: isRTL ? 'right' : 'left' }}
+                    <View style={{
+                      flex: 1,
+                      marginRight: isRTL ? 0 : 16,
+                      marginLeft: isRTL ? 16 : 0,
+                    }}>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: 'bold',
+                          color: '#1F2937',
+                          marginBottom: 12,
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
                       >
                         {course.title}
                       </Text>
-                      <Text 
-                        className="font-tajawal text-lg text-gray-600 leading-6"
-                        style={{ textAlign: isRTL ? 'right' : 'left' }}
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: '#6B7280',
+                          lineHeight: 24,
+                          textAlign: isRTL ? 'right' : 'left'
+                        }}
                       >
                         {course.description}
                       </Text>
                     </View>
                     
-                    <View 
-                      className="w-12 h-12 rounded-2xl items-center justify-center"
-                      style={{ backgroundColor: '#F0F9FF' }}
+                    <View
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 16,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#F0F9FF'
+                      }}
                     >
-                      <Ionicons 
-                        name={isRTL ? "arrow-back" : "arrow-forward"} 
-                        size={24} 
-                        color="#0EA5E9" 
+                      <Ionicons
+                        name={isRTL ? "arrow-back" : "arrow-forward"}
+                        size={24}
+                        color="#0EA5E9"
                       />
                     </View>
                   </View>
                   
-                  <View 
-                    className="flex-row items-center justify-between"
-                    style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
-                  >
-                    <View 
-                      className="px-4 py-2 rounded-2xl"
-                      style={{ backgroundColor: '#F0F9FF' }}
-                    >
-                      <Text className="font-tajawal-bold text-blue-600 text-sm">
-                        {course.lessons?.length || 0} {t('home.lessonsCount')}
-                      </Text>
-                    </View>
-                    <Text 
-                      className="font-tajawal text-gray-500 text-sm"
-                      style={{ textAlign: isRTL ? 'left' : 'right' }}
-                    >
-                      {t('home.tapToContinue')}
+                  {/* Progress Bar */}
+                  <View>
+                    <Text style={{ color: '#6B7280', marginBottom: 8, textAlign: isRTL ? 'right' : 'left' }}>
+                      {t('home.progress')} - {Math.round(course.progress * 100)}%
                     </Text>
+                    <View style={{ height: 8, backgroundColor: '#E5E7EB', borderRadius: 4, overflow: 'hidden' }}>
+                      <View style={{ height: '100%', width: `${course.progress * 100}%`, backgroundColor: '#3B82F6', borderRadius: 4 }} />
+                    </View>
                   </View>
+
                 </CurvedCard>
               ))}
             </View>
           )}
         </View>
-
-        {/* Bottom Spacing */}
-        <View className="h-8" />
       </ScrollView>
     </SafeAreaView>
   );
 };
+
+export default HomeScreen;

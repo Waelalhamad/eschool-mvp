@@ -28,7 +28,7 @@ export class Lesson {
   courseId: mongoose.Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' })
-  quizId?: mongoose.Types.ObjectId;
+  quiz?: mongoose.Types.ObjectId;
 
   createdAt: Date;
   updatedAt: Date;

@@ -93,13 +93,13 @@ const CurvedButton = ({
   const getTextSize = () => {
     switch (size) {
       case 'small':
-        return 'text-sm';
+        return 14;
       case 'medium':
-        return 'text-base';
+        return 16;
       case 'large':
-        return 'text-lg';
+        return 18;
       default:
-        return 'text-lg';
+        return 18;
     }
   };
 
@@ -165,8 +165,7 @@ const CurvedButton = ({
       return (
         <>
           <Text 
-            className={`font-tajawal-bold ${textSize}`}
-            style={[{ color: textColor }, textStyle]}
+            style={[{ color: textColor, fontSize: textSize, fontWeight: 'bold' }, textStyle]}
           >
             {title}
           </Text>
@@ -178,8 +177,7 @@ const CurvedButton = ({
         <>
           {iconElement}
           <Text 
-            className={`font-tajawal-bold ${textSize}`}
-            style={[{ color: textColor }, textStyle]}
+            style={[{ color: textColor, fontSize: textSize, fontWeight: 'bold' }, textStyle]}
           >
             {title}
           </Text>

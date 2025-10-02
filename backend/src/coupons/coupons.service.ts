@@ -42,7 +42,7 @@ export class CouponsService {
 
     // Add courses to user's unlocked courses
     const newCourses = coupon.allowedCourses.filter(
-      course => !user.coursesUnlocked.some(uc => uc.id === course.id)
+      course => !user.coursesUnlocked.some(uc => uc._id.toString() === course._id.toString())
     );
 
     user.coursesUnlocked.push(...newCourses);
