@@ -18,7 +18,6 @@ const MyUploadsScreen = () => {
 
   const fetchUploads = async () => {
     setIsLoading(true);
-    // Simulate API call
     setTimeout(() => {
       setUploads([
         {
@@ -47,16 +46,16 @@ const MyUploadsScreen = () => {
     }, 1000);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColors = (status) => {
     switch (status) {
       case "approved":
-        return "bg-green-100 text-green-800 border-green-200";
+        return { bg: '#DCFCE7', text: '#059669', border: '#BBF7D0' };
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return { bg: '#FEF3C7', text: '#D97706', border: '#FDE68A' };
       case "rejected":
-        return "bg-red-100 text-red-800 border-red-200";
+        return { bg: '#FEE2E2', text: '#DC2626', border: '#FECACA' };
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return { bg: '#F3F4F6', text: '#6B7280', border: '#E5E7EB' };
     }
   };
 
@@ -73,80 +72,94 @@ const MyUploadsScreen = () => {
     }
   };
 
-  const UploadCard = ({ upload }) => (
-    <View className="bg-white rounded-2xl p-6 mb-4 shadow-sm border border-gray-100">
-      <View className="flex-row items-start justify-between mb-3">
-        <Text className="text-lg font-bold text-gray-800 flex-1 pr-4">
-          {upload.title}
-        </Text>
-        <View
-          className={`px-3 py-1 rounded-full border ${getStatusColor(
-            upload.status
-          )}`}
-        >
-          <View className="flex-row items-center">
-            <Ionicons
-              name={getStatusIcon(upload.status)}
-              size={16}
-              color={
-                upload.status === "approved"
-                  ? "#059669"
-                  : upload.status === "pending"
-                  ? "#D97706"
-                  : "#DC2626"
-              }
-              style={{ marginRight: 4 }}
-            />
-
-            <Text
-              className={`text-sm font-medium capitalize ${
-                upload.status === "approved"
-                  ? "text-green-800"
-                  : upload.status === "pending"
-                  ? "text-yellow-800"
-                  : "text-red-800"
-              }`}
-            >
-              {upload.status}
-            </Text>
+  const UploadCard = ({ upload }) => {
+    const colors = getStatusColors(upload.status);
+    
+    return (
+      <View style={{ 
+        backgroundColor: 'white', 
+        borderRadius: 16, 
+        padding: 24, 
+        marginBottom: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+        borderWidth: 1,
+        borderColor: '#F3F4F6'
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#1F2937', flex: 1, paddingRight: 16 }}>
+            {upload.title}
+          </Text>
+          <View style={{ 
+            paddingHorizontal: 12, 
+            paddingVertical: 6, 
+            borderRadius: 20,
+            backgroundColor: colors.bg,
+            borderWidth: 1,
+            borderColor: colors.border
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons
+                name={getStatusIcon(upload.status)}
+                size={16}
+                color={colors.text}
+                style={{ marginRight: 4 }}
+              />
+              <Text style={{ fontSize: 14, fontWeight: '500', color: colors.text, textTransform: 'capitalize' }}>
+                {upload.status}
+              </Text>
+            </View>
           </View>
         </View>
+
+        <Text style={{ fontSize: 14, color: '#9CA3AF', marginBottom: 12 }}>
+          Uploaded on {new Date(upload.createdAt).toLocaleDateString()}
+        </Text>
+
+        {upload.adminNotes && (
+          <View style={{ backgroundColor: '#F9FAFB', borderRadius: 12, padding: 12 }}>
+            <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 4 }}>
+              Admin Notes:
+            </Text>
+            <Text style={{ fontSize: 14, color: '#6B7280' }}>{upload.adminNotes}</Text>
+          </View>
+        )}
       </View>
-
-      <Text className="text-sm text-gray-500 mb-3">
-        Uploaded on {new Date(upload.createdAt).toLocaleDateString()}
-      </Text>
-
-      {upload.adminNotes && (
-        <View className="bg-gray-50 rounded-xl p-3">
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Admin Notes:
-          </Text>
-          <Text className="text-sm text-gray-600">{upload.adminNotes}</Text>
-        </View>
-      )}
-    </View>
-  );
+    );
+  };
 
   return (
     <ScrollView
-      className="flex-1 bg-gray-50"
+      style={{ flex: 1, backgroundColor: '#F9FAFB' }}
       refreshControl={
         <RefreshControl refreshing={isLoading} onRefresh={fetchUploads} />
       }
     >
-      <View className="p-6">
-        <Text className="text-2xl font-bold text-gray-800 mb-6">
+      <View style={{ padding: 24 }}>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F2937', marginBottom: 24 }}>
           My Uploads
         </Text>
 
         {uploads.length === 0 ? (
-          <View className="bg-white rounded-2xl p-8 items-center shadow-sm">
+          <View style={{ 
+            backgroundColor: 'white', 
+            borderRadius: 16, 
+            padding: 32, 
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4
+          }}>
             <Ionicons name="cloud-upload-outline" size={64} color="#D1D5DB" />
-            <Text className="text-xl font-semibold text-gray-600 mt-4 mb-2">
+            <Text style={{ fontSize: 20, fontWeight: '600', color: '#6B7280', marginTop: 16, marginBottom: 8 }}>
               No uploads yet
             </Text>
-            <Text className="text-base text-gray-500 text-center">
+            <Text style={{ fontSize: 16, color: '#9CA3AF', textAlign: 'center' }}>
               Start creating content by uploading your first lesson
             </Text>
           </View>
